@@ -40,7 +40,7 @@ const IncomesPage = () => {
                         onClick={() => dispatch(getIncomeByYear(btn))}
                         key={i}
                         label={btn}
-                        extraClass='w-20 ml-2 mb-2'
+                        extraClass='w-24 ml-2 mb-2'
                         small
                         bgClass={income.year === btn && 'bg-blue-600'}
                       />

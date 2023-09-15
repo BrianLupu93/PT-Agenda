@@ -221,7 +221,7 @@ const BookingTable = () => {
           </table>
           {todayBookings.length === 0 && (
             <div className='mt-10 w-full text-center text-xl text-rose-500'>
-              Nu exista sedinte programate pentru data curenta!
+              Nu exista sedinte programate pentru data selectata!
             </div>
           )}
         </div>

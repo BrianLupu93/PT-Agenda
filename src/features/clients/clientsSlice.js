@@ -5,7 +5,7 @@ import { clientsUrl, incomesUrl } from '../api/serverUrl';
 export const fetchClients = createAsyncThunk(
   'clients/fetchClients',
   async () => {
-    const res = await axios(clientsUrl);
+    const res = await axios.get(clientsUrl);
     const data = await res.data;
     return data;
   }
