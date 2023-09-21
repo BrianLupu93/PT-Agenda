@@ -54,14 +54,15 @@ const IncomesPage = () => {
                 {incomes.length > 0 &&
                   filterYears().map((btn, i) => {
                     return (
-                      <Button
-                        onClick={() => setYearBtn(btn)}
-                        key={i}
-                        label={btn}
-                        extraClass='w-20 ml-2 mb-2'
-                        small
-                        bgClass={yearBtn === btn && 'bg-blue-600'}
-                      />
+                      <div className='w-20 ml-2 mb-2'>
+                        <Button
+                          onClick={() => setYearBtn(btn)}
+                          key={i}
+                          label={btn}
+                          small
+                          bgClass={yearBtn === btn && 'bg-blue-600'}
+                        />
+                      </div>
                     );
                   })}
               </div>
