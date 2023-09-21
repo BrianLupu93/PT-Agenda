@@ -1,70 +1,40 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { clientsUrl, incomesUrl } from '../api/serverUrl';
+import { clientsUrl } from '../api/serverUrl';
+import { toast } from 'react-hot-toast';
 
-export const fetchClients = createAsyncThunk(
-  'clients/fetchClients',
+export const getAllClients = createAsyncThunk(
+  'clients/getAllClietns',
   async () => {
     const res = await axios.get(clientsUrl);
     const data = await res.data;
     return data;
   }
 );
-export const deleteClient = createAsyncThunk(
-  'clients/deleteClient',
-  async (clientId) => {
-    await axios.delete(`${clientsUrl}/${clientId}`);
+
+export const getClient = createAsyncThunk('clients/getClient', async (id) => {
+  const res = await axios.get(`${clientsUrl}/${id}`);
+  const data = await res.data;
+  return data;
+});
+
+export const createClient = createAsyncThunk(
+  'clients/createClient',
+  async (data) => {
+    await axios.post(`${clientsUrl}`, data);
   }
 );
+
 export const updateClient = createAsyncThunk(
   'clients/updateClient',
   async ({ id, data }) => {
     await axios.patch(`${clientsUrl}/${id}`, data);
   }
 );
-export const createSubscription = createAsyncThunk(
-  'clients/createSubscriptions',
-  async ({ id, data }) => {
-    await axios.patch(`${clientsUrl}/${id}`, data);
-  }
-);
-
-export const updateSubscription = createAsyncThunk(
-  'clients/updateSubscription',
-  async ({ id, data }) => {
-    await axios.patch(`${clientsUrl}/subscription/${id}`, data);
-  }
-);
-
-export const deleteSubscription = createAsyncThunk(
-  'clients/deleteSubscription',
-  async (clientId) => {
-    await axios.delete(`${clientsUrl}/subscription/${clientId}`);
-  }
-);
-
-export const addIncomes = createAsyncThunk(
-  'clients/addIncomes',
-  async ({ id, data }) => {
-    await axios.post(`${incomesUrl}/${id}`, data);
-  }
-);
-
-export const getIncomeYears = createAsyncThunk(
-  'clients/getIncomeYears',
-  async () => {
-    const res = await axios.get(incomesUrl);
-    const data = await res.data.years;
-    return data;
-  }
-);
-
-export const getIncomeByYear = createAsyncThunk(
-  'clients/getIncomeByYear',
+export const deleteClient = createAsyncThunk(
+  'clients/deleteClient',
   async (id) => {
-    const res = await axios.get(`${incomesUrl}/${id}`);
-    const data = await res.data.year;
-    return data;
+    await axios.delete(`${clientsUrl}/${id}`);
   }
 );
 
@@ -72,45 +42,63 @@ const initialState = {
   isLoading: false,
   error: '',
   clients: [],
-  subscriptions: [],
   selectedClient: {},
-  incomeYears: [],
-  incomeByYear: {},
 };
 
 export const clientsSlice = createSlice({
   name: 'clients',
   initialState,
   reducers: {
-    setSelectedClient: (state, action) => {
-      const findClient = state.clients.find(
-        (client) => client._id === action.payload
-      );
-      state.selectedClient = findClient;
-    },
     resetSelectedClient: (state) => {
       state.selectedClient = {};
     },
-    resetError: (state) => {
+    resetClientError: (state) => {
       state.error = '';
+    },
+    setSelectedClient: (state, action) => {
+      const client = state.clients.find(
+        (client) => client._id === action.payload
+      );
+
+      state.selectedClient = client === undefined ? {} : client;
     },
   },
   extraReducers: (builder) => {
-    // fetchClients
-    builder.addCase(fetchClients.pending, (state) => {
+    // getAllCLients
+    builder.addCase(getAllClients.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(fetchClients.fulfilled, (state, action) => {
+    builder.addCase(getAllClients.fulfilled, (state, action) => {
       state.isLoading = false;
       state.clients = action.payload.data;
-      const subscriptions = state.clients.filter(
-        (client) =>
-          client.subscription[0] !== undefined || client.subscription.lenght > 0
-      );
-      state.subscriptions = subscriptions;
     });
-    builder.addCase(fetchClients.rejected, (state, action) => {
+    builder.addCase(getAllClients.rejected, (state, action) => {
       state.isLoading = false;
+      state.error = action.error.message;
+    });
+    // getClient
+    builder.addCase(getClient.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(getClient.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.selectedClient = action.payload.data;
+    });
+    builder.addCase(getClient.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message;
+    });
+    // createClient
+    builder.addCase(createClient.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(createClient.fulfilled, (state) => {
+      toast.success('Client nou adaugat.');
+      state.isLoading = false;
+    });
+    builder.addCase(createClient.rejected, (state, action) => {
+      state.isLoading = false;
+      toast.error('Eroare! Te rugam sa incerci din nou.');
       state.error = action.error.message;
     });
     // updateClient
@@ -118,10 +106,12 @@ export const clientsSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(updateClient.fulfilled, (state) => {
+      toast.success('Date client actualizate.');
       state.isLoading = false;
     });
     builder.addCase(updateClient.rejected, (state, action) => {
       state.isLoading = false;
+      toast.error('Eroare! Te rugam sa incerci din nou.');
       state.error = action.error.message;
     });
     // deleteClient
@@ -129,83 +119,17 @@ export const clientsSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(deleteClient.fulfilled, (state) => {
+      toast.success('Clientul a fost sters definitiv.');
       state.isLoading = false;
     });
     builder.addCase(deleteClient.rejected, (state, action) => {
       state.isLoading = false;
-      state.error = action.error.message;
-    });
-    // Create Subscription
-    builder.addCase(createSubscription.pending, (state) => {
-      state.isLoading = true;
-    });
-    builder.addCase(createSubscription.fulfilled, (state) => {
-      state.isLoading = false;
-    });
-    builder.addCase(createSubscription.rejected, (state, action) => {
-      state.isLoading = false;
-      state.error = action.error.message;
-    });
-    // deleteSubscription
-    builder.addCase(deleteSubscription.pending, (state) => {
-      state.isLoading = true;
-    });
-    builder.addCase(deleteSubscription.fulfilled, (state) => {
-      state.isLoading = false;
-    });
-    builder.addCase(deleteSubscription.rejected, (state, action) => {
-      state.isLoading = false;
-      state.error = action.error.message;
-    });
-    // Update Subscription
-    builder.addCase(updateSubscription.pending, (state) => {
-      state.isLoading = true;
-    });
-    builder.addCase(updateSubscription.fulfilled, (state) => {
-      state.isLoading = false;
-    });
-    builder.addCase(updateSubscription.rejected, (state, action) => {
-      state.isLoading = false;
-      state.error = action.error.message;
-    });
-    // addIcomes
-    builder.addCase(addIncomes.pending, (state) => {
-      state.isLoading = true;
-    });
-    builder.addCase(addIncomes.fulfilled, (state) => {
-      state.isLoading = false;
-    });
-    builder.addCase(addIncomes.rejected, (state, action) => {
-      state.isLoading = false;
-      state.error = action.error.message;
-    });
-    // getIncomeYears
-    builder.addCase(getIncomeYears.pending, (state) => {
-      state.isLoading = true;
-    });
-    builder.addCase(getIncomeYears.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.incomeYears = action.payload;
-    });
-    builder.addCase(getIncomeYears.rejected, (state, action) => {
-      state.isLoading = false;
-      state.error = action.error.message;
-    });
-    // getIncomeByYear
-    builder.addCase(getIncomeByYear.pending, (state) => {
-      state.isLoading = true;
-    });
-    builder.addCase(getIncomeByYear.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.incomeByYear = action.payload;
-    });
-    builder.addCase(getIncomeByYear.rejected, (state, action) => {
-      state.isLoading = false;
+      toast.error('Eroare! Te rugam sa incerci din nou.');
       state.error = action.error.message;
     });
   },
 });
 
-export const { setSelectedClient, resetSelectedClient, resetError } =
+export const { resetSelectedClient, resetClientError, setSelectedClient } =
   clientsSlice.actions;
 export default clientsSlice.reducer;

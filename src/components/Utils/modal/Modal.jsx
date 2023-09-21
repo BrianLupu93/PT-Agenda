@@ -56,7 +56,7 @@ const Modal = ({
           overflow-y-auto 
           fixed 
           inset-0 
-          z-[99999] 
+          z-[999] 
           outline-none 
           focus:outline-none
           bg-neutral-800/70

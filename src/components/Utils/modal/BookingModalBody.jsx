@@ -1,21 +1,28 @@
 import CalendarMini from '../../booking/CalendarMini';
 import { useForm } from 'react-hook-form';
 import Select from '../Select';
-import { clients, timeRanges } from '../../../data/dataVariables';
+import { timeRanges } from '../../../data/dataVariables';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedClient } from '../../../features/clients/clientsSlice';
+
 import {
   setTime,
   resetTime,
   resetBookingDays,
 } from '../../../features/booking/bookingSlice';
 
+import { setSelectedSubscription } from '../../../features/subscription/subscriptionSlice';
+
 const BookingModalBody = () => {
   const dispatch = useDispatch();
-  const clients = useSelector((state) => state.clients.subscriptions);
+  const subscriptions = useSelector(
+    (state) => state.subscription.activeSubscriptions
+  );
   const booking = useSelector((state) => state.booking);
-  const selectedClient = useSelector((state) => state.clients.selectedClient);
+  const selectedClient = useSelector((state) => state.client.selectedClient);
   const modalFrom = useSelector((state) => state.modal.from);
+  const selectedSubscription = useSelector(
+    (state) => state.subscription.selectedSubscription
+  );
 
   const {
     register,
@@ -37,10 +44,12 @@ const BookingModalBody = () => {
             required
             label='Client'
             extraClass='py-2 mb-1'
-            options={clients.map((client) => {
-              return { id: client._id, value: client.name };
+            options={subscriptions.map((subscription) => {
+              return { id: subscription.clientId, value: subscription.name };
             })}
-            onChangeCapture={(e) => dispatch(setSelectedClient(e.target.value))}
+            onChangeCapture={(e) =>
+              dispatch(setSelectedSubscription(e.target.value))
+            }
           />
         )}
 
@@ -61,8 +70,8 @@ const BookingModalBody = () => {
         <div className='w-full text-center text-red-500'>
           Sedinte Programate:
           <span className='font-bold pl-2'>
-            {Object.keys(selectedClient).length > 0
-              ? selectedClient.subscription[0].trainingsScheduled +
+            {Object.keys(selectedSubscription).length > 0
+              ? selectedSubscription.trainingsScheduled +
                 (booking.bookingDays.length > 0
                   ? booking.bookingDays.length
                   : 0)
@@ -72,8 +81,8 @@ const BookingModalBody = () => {
         <div className='w-full text-center text-blue-600'>
           Sedinte Restante:
           <span className='font-bold pl-2'>
-            {Object.keys(selectedClient).length > 0
-              ? selectedClient.subscription[0].trainingsToSchedule -
+            {Object.keys(selectedSubscription).length > 0
+              ? selectedSubscription.trainingsToSchedule -
                 (booking.bookingDays.length > 0
                   ? booking.bookingDays.length
                   : 0)

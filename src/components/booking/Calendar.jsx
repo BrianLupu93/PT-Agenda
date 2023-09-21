@@ -19,25 +19,26 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedDay } from '../../features/app/appSlice';
 import { closeModal, openModal } from '../../features/modal/confirmModalSlice';
 import {
-  fetchBookingsAmount,
-  fetchTodayBookings,
+  createBooking,
+  getAllBookings,
   resetBookingDays,
   resetTime,
+  setTodayBookings,
 } from '../../features/booking/bookingSlice';
+import { resetSelectedClient } from '../../features/clients/clientsSlice';
 import {
-  resetSelectedClient,
-  setSelectedClient,
-  createSubscription,
-  fetchClients,
-} from '../../features/clients/clientsSlice';
+  getAllActiveSubscriptions,
+  updateSubscription,
+} from '../../features/subscription/subscriptionSlice';
 
 const Calendar = () => {
   const dispatch = useDispatch();
   const selectedDay = useSelector((state) => state.app.selectedDay);
   const confirmModal = useSelector((state) => state.modal);
   const bookingDays = useSelector((state) => state.booking.bookingDays);
-  const selectedClient = useSelector((state) => state.clients.selectedClient);
-  const error = useSelector((state) => state.clients.error);
+  const selectedSubscription = useSelector(
+    (state) => state.subscription.selectedSubscription
+  );
   const monthsNames = months;
 
   const {
@@ -62,7 +63,7 @@ const Calendar = () => {
   // -------- SELECTED DAY ---------
   useEffect(() => {
     dispatch(setSelectedDay(today));
-    dispatch(fetchTodayBookings(today));
+    // dispatch(fetchTodayBookings(today));
   }, []);
 
   // -------- CHANGE MONTH ---------
@@ -101,7 +102,7 @@ const Calendar = () => {
         .format('DD/MM/YYYY');
 
       dispatch(setSelectedDay(newSelectedDay));
-      dispatch(fetchTodayBookings(newSelectedDay));
+      dispatch(setTodayBookings(newSelectedDay));
     },
     [currentDay]
   );
@@ -170,51 +171,35 @@ const Calendar = () => {
   // -------------------------------------------------
 
   const onSubmit = async () => {
-    const scheduled =
-      selectedClient.subscription[0].trainingsScheduled + bookingDays.length;
-    const toSchedule =
-      selectedClient.subscription[0].trainingsToSchedule - bookingDays.length;
-    const newTrainingDays = [
-      ...selectedClient.subscription[0].trainingDays,
-      ...bookingDays,
-    ];
-
-    const subscription = {
-      trainingsTotal: selectedClient.subscription[0].trainingsTotal,
-      trainingsDone: selectedClient.subscription[0].trainingsDone,
-      trainingsRemain: selectedClient.subscription[0].trainingsRemain,
-      trainingsReBooked: selectedClient.subscription[0].trainingsReBooked,
-      trainingsScheduled: scheduled,
-      trainingsToSchedule: toSchedule,
-      startDate: selectedClient.subscription[0].startDate,
-      endDate: selectedClient.subscription[0].endDate,
-      isActive: selectedClient.subscription[0].isActive,
-      price: selectedClient.subscription[0].price,
-      trainingDays: newTrainingDays,
-    };
-
-    const reqData = {
-      name: selectedClient.name,
-      eamil: selectedClient.email,
-      phone: selectedClient.phone,
-      subscription: [subscription],
+    const newSubscriptionData = {
+      ...selectedSubscription,
+      trainingsScheduled:
+        selectedSubscription.trainingsScheduled + bookingDays.length,
+      trainingsToSchedule:
+        selectedSubscription.trainingsToSchedule - bookingDays.length,
+      trainingDays: [...selectedSubscription.trainingDays, ...bookingDays],
     };
 
     await dispatch(
-      createSubscription({ id: selectedClient._id, data: reqData })
+      updateSubscription({
+        id: selectedSubscription._id,
+        data: newSubscriptionData,
+      })
     );
-    if (error !== '') {
-      toast.error('Eroare! Te rog sa incerci din nou');
-    } else {
-      toast.success('Sedintele au fost programate');
-    }
-    await dispatch(fetchBookingsAmount());
-    await dispatch(fetchClients());
-    await dispatch(fetchTodayBookings(selectedDay));
+    bookingDays.forEach(async (bookDay) => {
+      dispatch(
+        createBooking({
+          name: selectedSubscription.name,
+          clientId: selectedSubscription.clientId,
+          subscriptionId: selectedSubscription._id,
+          day: bookDay,
+        })
+      );
+    });
+    await dispatch(getAllBookings());
     await dispatch(closeModal());
     await dispatch(resetBookingDays());
     await dispatch(resetTime());
-    await dispatch(setSelectedClient({}));
     await dispatch(resetSelectedClient());
 
     reset();
@@ -235,6 +220,7 @@ const Calendar = () => {
         title: 'Programeaza sedinte',
       })
     );
+    await dispatch(getAllActiveSubscriptions());
   };
 
   return (

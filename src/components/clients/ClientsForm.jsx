@@ -1,7 +1,5 @@
 import { useForm } from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
-import { clientsUrl } from '../../features/api/serverUrl';
-import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Input from '../Utils/Input';
 import Button from '../Utils/Button';
@@ -13,7 +11,8 @@ import {
   setEmpty,
 } from '../../features/modal/confirmModalSlice';
 import {
-  fetchClients,
+  createClient,
+  getAllClients,
   resetSelectedClient,
   updateClient,
 } from '../../features/clients/clientsSlice';
@@ -21,8 +20,7 @@ import {
 const ClientsForm = ({ headline, buttonLabel }) => {
   const dispatch = useDispatch();
   const confirmModal = useSelector((state) => state.modal);
-  const selectedClient = useSelector((state) => state.clients.selectedClient);
-  const error = useSelector((state) => state.clients.error);
+  const selectedClient = useSelector((state) => state.client.selectedClient);
 
   const {
     register,
@@ -37,21 +35,12 @@ const ClientsForm = ({ headline, buttonLabel }) => {
     },
   });
 
-  const onAddClientSubmit = (data) => {
-    axios
-      .post(`${clientsUrl}`, data)
-      .then((res) => {
-        toast.success('Client Adaugat');
-        dispatch(fetchClients());
-      })
-      .catch(() => {
-        toast.error('Eroare, te rog incearca din nou');
-      })
-      .finally(() => {
-        reset();
-        dispatch(closeModal());
-        dispatch(setEmpty());
-      });
+  const onAddClientSubmit = async (data) => {
+    await dispatch(createClient(data));
+    await dispatch(getAllClients());
+    reset();
+    dispatch(closeModal());
+    dispatch(setEmpty());
   };
 
   const openAddClientModal = () => {
@@ -70,20 +59,8 @@ const ClientsForm = ({ headline, buttonLabel }) => {
     }
   };
   const onUpdateClientSubmit = async (data) => {
-    const completeData = {
-      ...data,
-      subscription: selectedClient.subscription,
-      changeBookingData: true,
-    };
-    await dispatch(
-      updateClient({ id: selectedClient._id, data: completeData })
-    );
-    await dispatch(fetchClients());
-    if (error !== '') {
-      toast.error(error);
-    } else {
-      toast.success('Datele au fost actualizate');
-    }
+    await dispatch(updateClient({ id: selectedClient._id, data: data }));
+    await dispatch(getAllClients());
     dispatch(resetSelectedClient());
     dispatch(setEmpty());
     dispatch(closeModal());

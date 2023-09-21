@@ -4,7 +4,6 @@ import { RxUpdate } from 'react-icons/rx';
 import { MdDeleteForever } from 'react-icons/md';
 import dayjs from 'dayjs';
 import Modal from '../Utils/modal/Modal';
-import { toast } from 'react-hot-toast';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Input from '../Utils/Input';
@@ -19,44 +18,62 @@ import Select from '../Utils/Select';
 import { timeRanges } from '../../data/dataVariables';
 import CalendarMini from '../booking/CalendarMini';
 import { paginate } from '../../features/utils/paginate';
-import {
-  addIncomes,
-  deleteSubscription,
-  fetchClients,
-  resetSelectedClient,
-  setSelectedClient,
-  updateSubscription,
-} from '../../features/clients/clientsSlice';
 import Button from '../Utils/Button';
 import {
+  createBooking,
+  deleteAllBooking,
   resetBookingDays,
   resetTime,
   setTime,
 } from '../../features/booking/bookingSlice';
+import {
+  deleteSubscription,
+  getAllActiveSubscriptions,
+  resetSelecetdSubscription,
+  setSelectedSubscription,
+  updateExpiredSubscription,
+  updateSubscription,
+} from '../../features/subscription/subscriptionSlice';
 
 const SubscriptionsTable = () => {
   const isMobile = window.screen.width <= 420;
   const dispatch = useDispatch();
   const confirmModal = useSelector((state) => state.modal);
-  const clients = useSelector((state) => state.clients.clients);
-  const selectedClient = useSelector((state) => state.clients.selectedClient);
-  const subscriptions = useSelector((state) => state.clients.subscriptions);
+  const selectedSubscription = useSelector(
+    (state) => state.subscription.selectedSubscription
+  );
+  const subscriptions = useSelector(
+    (state) => state.subscription.activeSubscriptions
+  );
+  const booking = useSelector((state) => state.booking);
+
+  // -------------- PAGINATE AND SEARCH --------------
   const [currentPage, setCurrentPage] = useState(1);
   const [paginatedClients, setPaginatedClients] = useState(null);
   const [searchClient, setSearchClient] = useState(false);
   const [searchResult, setSearchResult] = useState(null);
   const [scheduleTrainings, setScheduleTrainings] = useState(false);
-  const booking = useSelector((state) => state.booking);
-  const error = useSelector((state) => state.clients.error);
   const clientsPerPage = 10;
-  const pagesButtons =
-    subscriptions.length % clientsPerPage > 0
-      ? parseInt(subscriptions.length / clientsPerPage) + 1
-      : subscriptions.length / clientsPerPage;
+  const [pagesButtons, setPagesButtons] = useState();
 
   useEffect(() => {
-    setPaginatedClients(paginate(subscriptions, clientsPerPage, currentPage));
-  }, [currentPage, clients]);
+    if (subscriptions !== undefined) {
+      const pages =
+        subscriptions.length % clientsPerPage > 0
+          ? parseInt(subscriptions.length / clientsPerPage) + 1
+          : subscriptions.length / clientsPerPage;
+      setPagesButtons(pages);
+    }
+    return;
+  }, [subscriptions]);
+
+  //  -----------------------------------------------------
+  useEffect(() => {
+    if (subscriptions !== undefined) {
+      setPaginatedClients(paginate(subscriptions, clientsPerPage, currentPage));
+    }
+    return;
+  }, [currentPage, subscriptions]);
 
   let count = 0;
 
@@ -69,10 +86,10 @@ const SubscriptionsTable = () => {
 
   // Open the Subscription Deatil modal
   const handleViewDetails = (id) => {
+    dispatch(setSelectedSubscription(id));
     dispatch(
       openModal({ from: 'subscriptionDetail', title: 'Detalii Abonament' })
     );
-    dispatch(setSelectedClient(id));
   };
   // Open update subscription modal from mobile
   const openUpdateSubscriptionMobile = () => {
@@ -82,57 +99,57 @@ const SubscriptionsTable = () => {
   };
   // Open update subscription modal form desktop
   const onUpdateSubscription = (id) => {
+    dispatch(setSelectedSubscription(id));
     dispatch(
       openModal({ from: 'updateSubscription', title: 'Reinoire Abonament' })
     );
-    dispatch(setSelectedClient(id));
   };
   // SUBMIT handler for update subscritpion
   const onSubmit = async (data) => {
-    const trainingScheduled = booking.bookingDays.length;
-    const remainToSchedule =
-      selectedClient.subscription[0].trainingsTotal -
-      booking.bookingDays.length;
     const startDate = dayjs(data.startDate).format('DD/MM/YYYY');
 
     const endDate = calculateEndSubscription(
       data.startDate,
-      selectedClient.subscription[0].trainingsTotal.toString()
+      selectedSubscription.trainingsTotal.toString()
     );
-    const subscription = {
-      trainingsTotal: selectedClient.subscription[0].trainingsTotal,
+    const subscriptionData = {
+      name: selectedSubscription.name,
+      clientId: selectedSubscription.clientId,
+      trainingsTotal: selectedSubscription.trainingsTotal,
       trainingsDone: 0,
-      trainingsRemain: selectedClient.subscription[0].trainingsTotal,
+      trainingsRemain: selectedSubscription.trainingsTotal,
       trainingsReBooked: 0,
-      trainingsScheduled: trainingScheduled,
-      trainingsToSchedule: remainToSchedule,
+      trainingsScheduled: booking.bookingDays.length,
+      trainingsToSchedule:
+        selectedSubscription.trainingsTotal - booking.bookingDays.length,
       startDate: startDate,
       endDate: endDate,
       isActive: true,
-      price: selectedClient.subscription[0].price,
+      price: selectedSubscription.price,
       trainingDays: booking.bookingDays,
     };
 
-    const reqData = {
-      name: selectedClient.name,
-      eamil: selectedClient.email,
-      phone: selectedClient.phone,
-      subscription: [subscription],
-    };
-
     await dispatch(
-      updateSubscription({ id: selectedClient._id, data: reqData })
+      updateExpiredSubscription({
+        id: selectedSubscription._id,
+        data: subscriptionData,
+      })
     );
-    if (error !== '') {
-      toast.success('Eroare! Te rog sa incerci din nou');
-    } else {
-      toast.success('Abonament actualizat');
-    }
-    await dispatch(addIncomes({ id: selectedClient._id, data: reqData }));
+
+    booking.bookingDays.forEach(async (bookDay) => {
+      dispatch(
+        createBooking({
+          name: selectedSubscription.name,
+          clientId: selectedSubscription.clientId,
+          subscriptionId: selectedSubscription._id,
+          day: bookDay,
+        })
+      );
+    });
+    await dispatch(getAllActiveSubscriptions());
     await dispatch(resetBookingDays());
     await dispatch(resetTime());
-    await dispatch(resetSelectedClient());
-    await dispatch(fetchClients());
+    await dispatch(resetSelecetdSubscription());
     await dispatch(closeModal());
     reset();
     setScheduleTrainings(false);
@@ -141,17 +158,18 @@ const SubscriptionsTable = () => {
   const handleCloseModal = () => {
     dispatch(resetBookingDays());
     dispatch(resetTime());
-    dispatch(resetSelectedClient());
+    dispatch(resetSelecetdSubscription());
     dispatch(closeModal());
     dispatch(setEmpty());
     setScheduleTrainings(false);
   };
   // Close DETAIL modal from mobile
   const handleCloseDetailModal = () => {
-    dispatch(resetSelectedClient());
+    dispatch(resetSelecetdSubscription());
     dispatch(setEmpty());
     dispatch(closeModal());
   };
+
   // Search by name handler
   const handleSearchClient = (e) => {
     e.target.value === '' ? setSearchClient(false) : setSearchClient(true);
@@ -161,9 +179,10 @@ const SubscriptionsTable = () => {
     );
     return setSearchResult(matchClients);
   };
-  // Open delete subsciption modal
 
+  // Open delete subsciption modal
   const openDeleteSubscriptionModal = (id) => {
+    dispatch(setSelectedSubscription(id));
     dispatch(
       openModal({
         from: 'deleteSubscription',
@@ -172,24 +191,19 @@ const SubscriptionsTable = () => {
           'Sunteti sigur ca doriti sa stergeti definitiv abonamentul? Datele vor fi sterge definitiv!',
       })
     );
-    dispatch(setSelectedClient(id));
   };
 
   const handleCloseDeleteSubscriptionModal = () => {
-    dispatch(resetSelectedClient());
+    dispatch(resetSelecetdSubscription());
     dispatch(closeModal());
     dispatch(setEmpty());
   };
 
   const handleDeleteSubscription = async () => {
-    await dispatch(deleteSubscription(selectedClient._id));
-    await dispatch(fetchClients());
-    if (error !== '') {
-      toast.error(error);
-    } else {
-      toast.success('Abonament sters');
-    }
-    dispatch(resetSelectedClient());
+    await dispatch(deleteSubscription(selectedSubscription._id));
+    await dispatch(deleteAllBooking(selectedSubscription._id));
+    await dispatch(getAllActiveSubscriptions());
+    dispatch(resetSelecetdSubscription());
     dispatch(setEmpty());
     dispatch(closeModal());
   };
@@ -238,15 +252,23 @@ const SubscriptionsTable = () => {
         </td>
         <td className='flex justify-center'>
           {isMobile ? (
-            <button onClick={(e) => handleViewDetails(id, e)}>
-              <BsPlusCircleFill
-                size={20}
-                className='text-blue-600 focus:text-rose-500 mx-2'
-              />
-            </button>
+            <>
+              <button onClick={(e) => handleViewDetails(id)}>
+                <BsPlusCircleFill
+                  size={20}
+                  className='text-blue-600 focus:text-rose-500 mx-2'
+                />
+              </button>
+              <button onClick={(e) => openDeleteSubscriptionModal(id)}>
+                <MdDeleteForever
+                  size={24}
+                  className='text-rose-500 hover:text-black mx-2'
+                />
+              </button>
+            </>
           ) : (
             <>
-              <button onClick={(e) => onUpdateSubscription(id, e)}>
+              <button onClick={(e) => onUpdateSubscription(id)}>
                 <RxUpdate
                   size={20}
                   className='text-blue-600 hover:text-rose-500 mx-2'
@@ -273,87 +295,70 @@ const SubscriptionsTable = () => {
       <div className='mb-1'>
         <span className='font-bold'>Nume Client:</span>
         <span className='font-bold text-blue-500 ml-2'>
-          {Object.keys(selectedClient).length > 0 &&
-            selectedClient !== undefined &&
-            selectedClient.name}
+          {Object.keys(selectedSubscription).length > 0 &&
+            selectedSubscription.name}
         </span>
       </div>
       <div className='mb-1'>
         <span className='font-bold'>Total Sedinte:</span>
         <span className='font-bold text-blue-500 ml-2'>
-          {Object.keys(selectedClient).length > 0 &&
-            selectedClient !== undefined &&
-            selectedClient.subscription[0] !== undefined &&
-            selectedClient.subscription[0].trainingsTotal}
+          {Object.keys(selectedSubscription).length > 0 &&
+            selectedSubscription.trainingsTotal}
         </span>
       </div>
       <div className='mb-1'>
         <span className='font-bold'>Sedinte Sustinute:</span>
         <span className='font-bold text-blue-500 ml-2'>
-          {Object.keys(selectedClient).length > 0 &&
-            selectedClient !== undefined &&
-            selectedClient.subscription[0] !== undefined &&
-            selectedClient.subscription[0].trainingsDone}
+          {Object.keys(selectedSubscription).length > 0 &&
+            selectedSubscription.trainingsDone}
         </span>
       </div>
       <div className='mb-1'>
         <span className='font-bold'>Sedinte Ramase:</span>
         <span className='font-bold text-blue-500 ml-2'>
-          {Object.keys(selectedClient).length > 0 &&
-            selectedClient !== undefined &&
-            selectedClient.subscription[0] !== undefined &&
-            selectedClient.subscription[0].trainingsRemain}
+          {Object.keys(selectedSubscription).length > 0 &&
+            selectedSubscription.trainingsRemain}
         </span>
       </div>
       <div className='mb-1'>
         <span className='font-bold'>Sedinte Alocate:</span>
         <span className='font-bold text-blue-500 ml-2'>
-          {Object.keys(selectedClient).length > 0 &&
-            selectedClient !== undefined &&
-            selectedClient.subscription[0] !== undefined &&
-            selectedClient.subscription[0].trainingsScheduled}
+          {Object.keys(selectedSubscription).length > 0 &&
+            selectedSubscription.trainingsScheduled}
         </span>
       </div>
       <div className='mb-1'>
         <span className='font-bold'>Sedinte Amanate:</span>
         <span className='font-bold text-rose-500 ml-2'>
-          {Object.keys(selectedClient).length > 0 &&
-            selectedClient !== undefined &&
-            selectedClient.subscription[0] !== undefined &&
-            selectedClient.subscription[0].trainingsReBooked}
+          {Object.keys(selectedSubscription).length > 0 &&
+            selectedSubscription.trainingsReBooked}
         </span>
       </div>
       <div className='mb-1'>
         <span className='font-bold'>Data Start:</span>
         <span className='font-bold text-blue-500 ml-2'>
-          {Object.keys(selectedClient).length > 0 &&
-            selectedClient !== undefined &&
-            selectedClient.subscription[0] !== undefined &&
-            selectedClient.subscription[0].startDate}
+          {Object.keys(selectedSubscription).length > 0 &&
+            selectedSubscription.startDate}
         </span>
       </div>
       <div className='mb-1'>
         <span className='font-bold'>Data Sfarsit:</span>
         <span className='font-bold text-blue-500 ml-2'>
-          {Object.keys(selectedClient).length > 0 &&
-            selectedClient !== undefined &&
-            selectedClient.subscription[0] !== undefined &&
-            selectedClient.subscription[0].endDate}
+          {Object.keys(selectedSubscription).length > 0 &&
+            selectedSubscription.endDate}
         </span>
       </div>
       <div className='mb-1'>
         <span className='font-bold'>Status:</span>
         <span
           className={`${
-            Object.keys(selectedClient).length > 0 &&
-            selectedClient.subscription[0] !== undefined &&
-            selectedClient.subscription[0].isActive
+            Object.keys(selectedSubscription).length > 0 &&
+            selectedSubscription.isActive
               ? 'text-green-500'
               : 'text-rose-500'
           } font-bold ml-2`}>
-          {Object.keys(selectedClient).length > 0 &&
-          selectedClient.subscription[0] !== undefined &&
-          selectedClient.subscription[0].isActive
+          {Object.keys(selectedSubscription).length > 0 &&
+          selectedSubscription.isActive
             ? 'ACTIV'
             : 'Expira Astazi'}
         </span>
@@ -371,23 +376,22 @@ const SubscriptionsTable = () => {
           <div className='mb-1'>
             <span className='font-bold'>CLIENT:</span>
             <span className='text-blue-500 ml-2 font-bold'>
-              {Object.keys(selectedClient).length > 0 && selectedClient.name}
+              {Object.keys(selectedSubscription).length > 0 &&
+                selectedSubscription.name}
             </span>
           </div>
           <div className='mb-1'>
             <span className='font-bold'>Numar Sedinte:</span>
             <span className='text-blue-500 ml-2 font-bold'>
-              {Object.keys(selectedClient).length > 0 &&
-                selectedClient.subscription[0] !== undefined &&
-                selectedClient.subscription[0].trainingsTotal}
+              {Object.keys(selectedSubscription).length > 0 &&
+                selectedSubscription.trainingsTotal}
             </span>
           </div>
           <div className='mb-1'>
             <span className='font-bold'>Pret:</span>
             <span className='text-blue-500 ml-2 font-bold'>
-              {Object.keys(selectedClient).length > 0 &&
-                selectedClient.subscription[0] !== undefined &&
-                selectedClient.subscription[0].price}
+              {Object.keys(selectedSubscription).length > 0 &&
+                selectedSubscription.price}
             </span>
           </div>
         </div>
@@ -440,9 +444,8 @@ const SubscriptionsTable = () => {
           <div className='w-full text-center text-blue-600'>
             Sedinte Restante:
             <span className='font-bold pl-2'>
-              {Object.keys(selectedClient).length > 0 &&
-                selectedClient.subscription[0] !== undefined &&
-                selectedClient.subscription[0].trainingsTotal -
+              {Object.keys(selectedSubscription).length > 0 &&
+                selectedSubscription.trainingsTotal -
                   booking.bookingDays.length}
             </span>
           </div>
@@ -483,45 +486,46 @@ const SubscriptionsTable = () => {
               </tr>
             </thead>
             <tbody>
-              {paginatedClients &&
+              {subscriptions !== undefined &&
+                paginatedClients &&
                 !searchClient &&
-                paginatedClients.map((client, i) => {
+                paginatedClients.map((subscription, i) => {
                   count += 1;
-                  const subs = client.subscription[0];
 
                   return (
                     <TableItem
-                      name={client.name}
-                      id={client._id}
-                      total={subs.trainingsTotal}
-                      done={subs.trainingsDone}
-                      remain={subs.trainingsRemain}
-                      scheduled={subs.trainingsScheduled}
-                      reBooked={subs.trainingsReBooked}
-                      startDate={subs.startDate}
-                      endDate={subs.endDate}
-                      status={subs.isActive ? 'ACTIV' : 'Expira Astazi'}
+                      name={subscription.name}
+                      id={subscription.clientId}
+                      total={subscription.trainingsTotal}
+                      done={subscription.trainingsDone}
+                      remain={subscription.trainingsRemain}
+                      scheduled={subscription.trainingsScheduled}
+                      reBooked={subscription.trainingsReBooked}
+                      startDate={subscription.startDate}
+                      endDate={subscription.endDate}
+                      status={subscription.isActive ? 'ACTIV' : 'Expira Astazi'}
                       key={i}
                       extraClass={count % 2 !== 0 ? 'bg-zinc-100' : ''}
                     />
                   );
                 })}
-              {searchClient &&
-                searchResult?.map((client, i) => {
+              {subscriptions !== undefined &&
+                searchClient &&
+                searchResult?.map((subscription, i) => {
                   count += 1;
-                  const subs = client.subscription[0];
+
                   return (
                     <TableItem
-                      name={client.name}
-                      id={client._id}
-                      total={subs.trainingsTotal}
-                      done={subs.trainingsDone}
-                      remain={subs.trainingsRemain}
-                      scheduled={subs.trainingsScheduled}
-                      reBooked={subs.trainingsReBooked}
-                      startDate={subs.startDate}
-                      endDate={subs.endDate}
-                      status={subs.isActive ? 'ACTIV' : 'Expira Astazi'}
+                      name={subscription.name}
+                      id={subscription.clientId}
+                      total={subscription.trainingsTotal}
+                      done={subscription.trainingsDone}
+                      remain={subscription.trainingsRemain}
+                      scheduled={subscription.trainingsScheduled}
+                      reBooked={subscription.trainingsReBooked}
+                      startDate={subscription.startDate}
+                      endDate={subscription.endDate}
+                      status={subscription.isActive ? 'ACTIV' : 'Expira Astazi'}
                       key={i}
                       extraClass={count % 2 !== 0 ? 'bg-zinc-100' : ''}
                     />
@@ -531,7 +535,8 @@ const SubscriptionsTable = () => {
           </table>
           {!searchClient && (
             <div className='flex flex-wrap w-full mt-4 justify-center text-sm'>
-              {pagesButtons > 0 &&
+              {subscriptions !== undefined &&
+                pagesButtons &&
                 Array.from(Array(pagesButtons).keys()).map((btn, i) => {
                   return (
                     <button

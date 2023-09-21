@@ -2,26 +2,45 @@ import Calendar from './Calendar';
 import BookingTable from './BookingTable';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { fetchClients, resetError } from '../../features/clients/clientsSlice';
-import { fetchBookingsAmount } from '../../features/booking/bookingSlice';
-import { setLogout } from '../../features/auth/authSlice';
+import {
+  getAllClients,
+  resetClientError,
+} from '../../features/clients/clientsSlice';
+import {
+  getAllBookings,
+  resetBookingError,
+  setTodayBookings,
+} from '../../features/booking/bookingSlice';
 
 const BookingPage = () => {
   const dispatch = useDispatch();
-  const error = useSelector((state) => state.clients.error);
+  const clientError = useSelector((state) => state.client.error);
+  const bookingError = useSelector((state) => state.booking.error);
+  const allBookings = useSelector((state) => state.booking.allBookings);
+  const selectedDay = useSelector((state) => state.app.selectedDay);
 
   useEffect(() => {
-    dispatch(fetchClients());
-    dispatch(fetchBookingsAmount());
+    dispatch(getAllClients());
+    dispatch(getAllBookings());
   }, []);
 
   useEffect(() => {
-    if (error === 'Request failed with status code 403') {
+    if (allBookings !== undefined && allBookings.lenght > 0) {
+      dispatch(setTodayBookings(selectedDay));
+    }
+  }, [allBookings, selectedDay]);
+
+  useEffect(() => {
+    if (
+      clientError === 'Request failed with status code 403' ||
+      bookingError === 'Request failed with status code 403'
+    ) {
       localStorage.clear();
-      dispatch(resetError());
+      dispatch(resetBookingError());
+      dispatch(resetClientError());
       dispatch(setLogout());
     }
-  }, [error]);
+  }, [bookingError, clientError]);
 
   return (
     <div className='w-full flex md:flex-row flex-col '>

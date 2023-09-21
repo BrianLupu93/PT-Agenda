@@ -8,7 +8,7 @@ const DayItem = ({
   currentMonth,
   currentYear,
 }) => {
-  const bookingsAmount = useSelector((state) => state.booking.bookingsAmount);
+  const bookings = useSelector((state) => state.booking.allBookings);
 
   const formatDate = (dayP, currentMonthP, currentYearP) => {
     let newDay;
@@ -34,9 +34,9 @@ const DayItem = ({
 
   const loadBookingAmount = () => {
     let count = 0;
-    bookingsAmount.map((booking) => {
-      if (booking.day === formatDate(day, currentMonth, currentYear)) {
-        return (count = booking.count);
+    bookings?.map((booking) => {
+      if (booking.day.day === formatDate(day, currentMonth, currentYear)) {
+        return (count += 1);
       }
     });
     return count;

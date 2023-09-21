@@ -5,22 +5,27 @@ import Modal from '../Utils/modal/Modal';
 import { toast } from 'react-hot-toast';
 import ClientsForm from './ClientsForm';
 import { useDispatch, useSelector } from 'react-redux';
-import { openModal, closeModal } from '../../features/modal/confirmModalSlice';
 import {
-  deleteClient,
-  fetchClients,
-  setSelectedClient,
-} from '../../features/clients/clientsSlice';
+  openModal,
+  closeModal,
+  setEmpty,
+} from '../../features/modal/confirmModalSlice';
 
 import { paginate } from '../../features/utils/paginate';
 import { useEffect, useState } from 'react';
+import {
+  deleteClient,
+  getAllClients,
+  resetSelectedClient,
+  setSelectedClient,
+} from '../../features/clients/clientsSlice';
 
 const ClientsTable = () => {
   const dispatch = useDispatch();
-  const clients = useSelector((state) => state.clients.clients);
+  const clients = useSelector((state) => state.client.clients);
   const confirmModal = useSelector((state) => state.modal);
-  const selectedClient = useSelector((state) => state.clients.selectedClient);
-  const error = useSelector((state) => state.clients.error);
+  const selectedClient = useSelector((state) => state.client.selectedClient);
+  // ---------- PAGINATE AND SEARCH -------------
   const [currentPage, setCurrentPage] = useState(1);
   const [paginatedClients, setPaginatedClients] = useState(null);
   const [searchClient, setSearchClient] = useState(false);
@@ -30,23 +35,23 @@ const ClientsTable = () => {
     clients.length % clientsPerPage > 0
       ? parseInt(clients.length / clientsPerPage) + 1
       : clients.length / clientsPerPage;
+  // -----------------------------------------------
 
   useEffect(() => {
     setPaginatedClients(paginate(clients, clientsPerPage, currentPage));
   }, [currentPage, clients]);
 
   const openUpdateClientModal = (id) => {
-    dispatch(setSelectedClient(id));
     dispatch(
       openModal({
         from: 'updateClient',
         title: 'Modifica date client',
       })
     );
+    dispatch(setSelectedClient(id));
   };
 
   const openDeleteClientModal = (id) => {
-    dispatch(setSelectedClient(id));
     dispatch(
       openModal({
         from: 'deleteClient',
@@ -55,17 +60,15 @@ const ClientsTable = () => {
           'Sunteti sigur ca doriti sa stergeti definitiv clientul? Datele vor fi sterge definitiv!',
       })
     );
+    dispatch(setSelectedClient(id));
   };
 
   const handleDeleteClient = async () => {
     await dispatch(deleteClient(selectedClient._id));
-    dispatch(fetchClients());
-    if (error !== '') {
-      toast.error(error);
-    } else {
-      toast.success('Client sters');
-    }
+    await dispatch(getAllClients());
     dispatch(closeModal());
+    dispatch(setEmpty());
+    dispatch(resetSelectedClient());
   };
 
   const handleSearchClient = (e) => {
@@ -113,21 +116,20 @@ const ClientsTable = () => {
         <div className='flex flex-col items-center justify-center mb-10'>
           <div className='text-3xl'>Clienti</div>
         </div>
+        <div className='flex justify-center items-center mb-2'>
+          <input
+            placeholder='Nume Client'
+            className='md:w-3/12 w-8/12 border border-rose-500 rounded-md px-2'
+            onChange={(e) => handleSearchClient(e)}
+          />
+          <AiOutlineSearch className='ml-2' size={20} color='black' />
+        </div>
 
-        <div className=''>
+        <div>
           <table className='rounded-sm bg-white w-full shadow-md'>
             <thead className='border-b-4'>
               <tr className='grid md:grid-cols-4 grid-cols-3 grid-flow-col gap-1 py-2 font-bold pl-4'>
-                <td>
-                  <div className='flex items-center'>
-                    <input
-                      placeholder='Nume'
-                      className='w-3/4 border border-rose-500 rounded-md px-2'
-                      onChange={(e) => handleSearchClient(e)}
-                    />
-                    <AiOutlineSearch className='ml-2' size={20} color='black' />
-                  </div>
-                </td>
+                <td>Nume</td>
                 <td>Telefon</td>
                 <td className='md:block hidden'>Email</td>
                 <td>Editare</td>

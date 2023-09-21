@@ -11,12 +11,6 @@ export const confirmModalSlice = createSlice({
   name: 'confirmModal',
   initialState,
   reducers: {
-    // openModal: (state) => {
-    //   state.isOpen = false;
-    // },
-    // closeModal: (state) => {
-    //   state.isOpen = true;
-    // },
     setMessage: (state, message) => {
       state.message = message;
     },

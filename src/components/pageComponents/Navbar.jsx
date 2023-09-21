@@ -11,7 +11,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className='fixed top-0 flex w-full items-center md:px-20 px-1 py-4 bg-zinc-900 z-[6666]'>
+    <div className='fixed top-0 flex w-full items-center md:px-20 px-1 py-4 bg-zinc-900 z-[666]'>
       <div className='flex w-full justify-center md:gap-4 gap-2'>
         <div className='md:w-36 w-28'>
           <Button

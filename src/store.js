@@ -3,7 +3,9 @@ import confirmModalReducer from './features/modal/confirmModalSlice';
 import bookingReducer from './features/booking/bookingSlice';
 import appReducer from './features/app/appSlice';
 import authReducer from './features/auth/authSlice';
-import clientsSlice from './features/clients/clientsSlice';
+import clientsReducer from './features/clients/clientsSlice';
+import incomeReducer from './features/income/incomeSlice';
+import subscriptionReducer from './features/subscription/subscriptionSlice';
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +13,8 @@ export const store = configureStore({
     booking: bookingReducer,
     app: appReducer,
     auth: authReducer,
-    clients: clientsSlice,
+    client: clientsReducer,
+    income: incomeReducer,
+    subscription: subscriptionReducer,
   },
 });

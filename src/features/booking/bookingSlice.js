@@ -2,50 +2,61 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { bookingUrl } from '../api/serverUrl';
 import axios from 'axios';
 
-export const fetchBookingsAmount = createAsyncThunk(
-  'booking/fetchAmmount',
+export const getAllBookings = createAsyncThunk(
+  'booking/getAllBookings',
   async () => {
-    const res = await axios.get(`${bookingUrl}/amount`);
+    const res = await axios.get(`${bookingUrl}`);
     const data = res.data;
     return data;
   }
 );
 
-export const fetchTodayBookings = createAsyncThunk(
-  'booking/fetchTodayBookings',
-  async (day) => {
-    const id = day.replaceAll('/', 'Y');
+export const getBooking = createAsyncThunk(
+  'bookings/getBooking',
+  async (id) => {
     const res = await axios.get(`${bookingUrl}/${id}`);
-    const data = res.data;
+    const data = await res.data;
     return data;
   }
 );
 
-export const deleteBooking = createAsyncThunk(
-  'booking/deleteBooking',
-  async ({ day, id, scheduled, toSchedule }) => {
-    await axios.patch(`${bookingUrl}/${id}`, {
-      day: day,
-      scheduled: scheduled,
-      toSchedule: toSchedule,
-    });
+export const createBooking = createAsyncThunk(
+  'bookings/createBooking',
+  async (bookData) => {
+    const res = await axios.post(`${bookingUrl}`, bookData);
+    const data = await res.data;
+    return data;
   }
 );
+
 export const updateBooking = createAsyncThunk(
   'booking/updateBooking',
   async ({ id, data }) => {
-    await axios.patch(`${bookingUrl}/update/${id}`, data);
+    await axios.patch(`${bookingUrl}/${id}`, data);
+  }
+);
+export const deleteBooking = createAsyncThunk(
+  'booking/deleteBooking',
+  async (id) => {
+    await axios.delete(`${bookingUrl}/${id}`);
+  }
+);
+export const deleteAllBooking = createAsyncThunk(
+  'booking/deleteAllBooking',
+  async (id) => {
+    await axios.delete(`${bookingUrl}/delete-all/${id}`);
   }
 );
 
 const initialState = {
+  allBookings: [],
   todayBookings: [],
   bookingDays: [],
-  bookingsAmount: [],
-  bookingToDelete: {},
+  selectedBooking: {},
   time: '',
   trainigOptions: [12, 16, 36, 48],
   prices: [600, 800, 1800, 2400],
+  error: '',
 };
 
 export const bookingSlice = createSlice({
@@ -69,35 +80,85 @@ export const bookingSlice = createSlice({
     resetTime: (state) => {
       state.time = '';
     },
-    setBookingToDelete: (state, action) => {
-      state.bookingToDelete = action.payload;
+    resetBookingError: (state) => {
+      state.error = '';
     },
-    resetBookingToDelete: (state) => {
-      state.bookingToDelete = {};
+    setTodayBookings: (state, action) => {
+      if (state.allBookings.length === 0) {
+        state.todayBookings = [];
+      } else {
+        state.todayBookings = state.allBookings.filter(
+          (book) => book.day.day === action.payload
+        );
+      }
     },
   },
   extraReducers: (builder) => {
-    // fetchBookingAmount
-    builder.addCase(fetchBookingsAmount.pending, (state) => {
+    // getAllBookings
+    builder.addCase(getAllBookings.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(fetchBookingsAmount.fulfilled, (state, action) => {
+    builder.addCase(getAllBookings.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.bookingsAmount = action.payload.data;
+      state.allBookings = action.payload.data;
     });
-    builder.addCase(fetchBookingsAmount.rejected, (state, action) => {
+    builder.addCase(getAllBookings.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.error.message;
     });
-    // fetchTodayBookings
-    builder.addCase(fetchTodayBookings.pending, (state) => {
+    // getBooking
+    builder.addCase(getBooking.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(fetchTodayBookings.fulfilled, (state, action) => {
+    builder.addCase(getBooking.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.todayBookings = action.payload.data;
+      state.selectedBooking = action.payload.data;
     });
-    builder.addCase(fetchTodayBookings.rejected, (state, action) => {
+    builder.addCase(getBooking.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message;
+    });
+    // createBooking
+    builder.addCase(createBooking.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(createBooking.fulfilled, (state) => {
+      state.isLoading = false;
+    });
+    builder.addCase(createBooking.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message;
+    });
+    // updateBooking
+    builder.addCase(updateBooking.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(updateBooking.fulfilled, (state, action) => {
+      state.isLoading = false;
+    });
+    builder.addCase(updateBooking.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message;
+    });
+    // deleteBooking
+    builder.addCase(deleteBooking.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(deleteBooking.fulfilled, (state, action) => {
+      state.isLoading = false;
+    });
+    builder.addCase(deleteBooking.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message;
+    });
+    // deleteAllBooking
+    builder.addCase(deleteAllBooking.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(deleteAllBooking.fulfilled, (state, action) => {
+      state.isLoading = false;
+    });
+    builder.addCase(deleteAllBooking.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.error.message;
     });
@@ -110,7 +171,7 @@ export const {
   resetBookingDays,
   setTime,
   resetTime,
-  setBookingToDelete,
-  resetBookingToDelete,
+  resetBookingError,
+  setTodayBookings,
 } = bookingSlice.actions;
 export default bookingSlice.reducer;

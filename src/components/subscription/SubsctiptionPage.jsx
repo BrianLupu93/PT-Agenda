@@ -2,29 +2,34 @@ import { useDispatch, useSelector } from 'react-redux';
 import SubscriptionForm from './SubscriptionForm';
 import SubscriptionsTable from './SubscriptionsTable';
 import { useEffect } from 'react';
-import { fetchClients, resetError } from '../../features/clients/clientsSlice';
+import { resetClientError } from '../../features/clients/clientsSlice';
 import { setLogout } from '../../features/auth/authSlice';
+import { resetBookingError } from '../../features/booking/bookingSlice';
+import { getAllActiveSubscriptions } from '../../features/subscription/subscriptionSlice';
 
 const SubscriptionPage = () => {
   const dispatch = useDispatch();
-  const clients = useSelector((state) => state.clients.clients);
-  const error = useSelector((state) => state.clients.error);
+  const subscriptions = useSelector(
+    (state) => state.subscription.subscriptions
+  );
+  const clientsError = useSelector((state) => state.client.error);
+  const bookingsError = useSelector((state) => state.booking.error);
 
   useEffect(() => {
-    dispatch(fetchClients());
+    dispatch(getAllActiveSubscriptions());
   }, []);
 
   useEffect(() => {
-    if (error === 'Request failed with status code 403') {
+    if (
+      clientsError === 'Request failed with status code 403' ||
+      clientsError === 'Request failed with status code 403'
+    ) {
       localStorage.clear();
-      dispatch(resetError());
+      dispatch(resetBookingError());
+      dispatch(resetClientError());
       dispatch(setLogout());
     }
-  }, [error]);
-
-  const subscriptions = clients.some(
-    (client) => client.subscription.length > 0
-  );
+  }, [clientsError, bookingsError]);
 
   return (
     <div className='h-full md:w-9/12 w-full mx-auto flex flex-col'>

@@ -15,20 +15,10 @@ import {
 } from '../../features/modal/confirmModalSlice';
 
 import {
-  deleteBooking,
-  fetchBookingsAmount,
-  fetchTodayBookings,
   resetBookingDays,
-  resetBookingToDelete,
   resetTime,
-  setBookingToDelete,
-  updateBooking,
 } from '../../features/booking/bookingSlice';
-import {
-  fetchClients,
-  resetSelectedClient,
-  setSelectedClient,
-} from '../../features/clients/clientsSlice';
+import { resetSelectedClient } from '../../features/clients/clientsSlice';
 
 const BookingTable = () => {
   const dispatch = useDispatch();
@@ -36,11 +26,7 @@ const BookingTable = () => {
   const selectedDay = useSelector((state) => state.app.selectedDay);
   const bookingDays = useSelector((state) => state.booking.bookingDays);
   const todayBookings = useSelector((state) => state.booking.todayBookings);
-  const bookingToDelete = useSelector((state) => state.booking.bookingToDelete);
-  const selectedClient = useSelector((state) => state.clients.selectedClient);
-  const error = useSelector((state) => state.booking.error);
-
-  const test = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const selectedClient = useSelector((state) => state.client.selectedClient);
 
   const {
     handleSubmit,
@@ -51,8 +37,6 @@ const BookingTable = () => {
   // -------------------------------------------------
 
   const onDelete = (day, id) => {
-    dispatch(setBookingToDelete({ day: day, id: id }));
-    dispatch(setSelectedClient(id));
     dispatch(
       openModal({
         from: 'deleteBooking',
@@ -63,8 +47,6 @@ const BookingTable = () => {
     );
   };
   const onUpdate = (id, day) => {
-    dispatch(setBookingToDelete({ day: day }));
-    dispatch(setSelectedClient(id));
     dispatch(
       openModal({
         from: 'updateBooking',
@@ -75,24 +57,6 @@ const BookingTable = () => {
   };
 
   const onDeleteSubmit = async () => {
-    await dispatch(
-      deleteBooking({
-        day: bookingToDelete.day,
-        id: bookingToDelete.id,
-        scheduled: selectedClient.subscription[0].trainingsScheduled - 1,
-        toSchedule: selectedClient.subscription[0].trainingsToSchedule + 1,
-      })
-    );
-    await dispatch(fetchClients());
-    await dispatch(fetchBookingsAmount());
-    await dispatch(fetchTodayBookings(selectedDay));
-
-    if (error === '') {
-      toast.error('Eroare! Te rog sa incerci din nou');
-    } else {
-      toast.success('Programarea a fost stearsa');
-    }
-    dispatch(resetBookingToDelete());
     dispatch(resetSelectedClient());
     dispatch(setFrom(''));
     dispatch(setEmpty());
@@ -100,28 +64,6 @@ const BookingTable = () => {
   };
 
   const onUpdateSubmit = async () => {
-    const updateTrainings = selectedClient.subscription[0].trainingDays.filter(
-      (el) => el.day !== bookingToDelete.day
-    );
-
-    updateTrainings.push(bookingDays[0]);
-
-    const data = {
-      dayToDelete: bookingToDelete.day,
-      dayToAdd: bookingDays[0],
-    };
-
-    await dispatch(updateBooking({ id: selectedClient._id, data: data }));
-    if (error === '') {
-      toast.error('Eroare! Te rog sa incerci din nou');
-    } else {
-      toast.success('Sedinta a fost reprogramata');
-    }
-    await dispatch(fetchClients());
-    await dispatch(fetchBookingsAmount());
-    await dispatch(fetchTodayBookings(selectedDay));
-
-    dispatch(resetBookingToDelete());
     dispatch(resetSelectedClient());
     dispatch(resetBookingDays());
     dispatch(resetTime());
@@ -131,7 +73,6 @@ const BookingTable = () => {
   };
 
   const handleCloseModal = () => {
-    dispatch(resetBookingToDelete());
     dispatch(closeModal());
     dispatch(resetSelectedClient());
     dispatch(resetTime());
@@ -140,7 +81,6 @@ const BookingTable = () => {
   };
 
   const handleCloseUpdateModal = () => {
-    dispatch(resetBookingToDelete());
     dispatch(closeModal());
     dispatch(resetSelectedClient());
     dispatch(resetBookingDays());
@@ -206,10 +146,10 @@ const BookingTable = () => {
                   return (
                     <TableItem
                       name={book.name}
-                      time={book.booking[0].time}
-                      status={book.booking[0].done}
-                      id={book.id}
-                      day={book.booking[0].day}
+                      time={book.day.time}
+                      status={book.day.done}
+                      id={book.subscriptionId}
+                      day={book.day.day}
                       key={i}
                       count={i + 1}
                       extraClass={(i + 1) % 2 !== 0 ? 'bg-zinc-100' : ''}

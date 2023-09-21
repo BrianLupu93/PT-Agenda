@@ -10,34 +10,35 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   closeModal,
   openModal,
+  setEmpty,
 } from './../../features/modal/confirmModalSlice';
 import {
+  createBooking,
   resetBookingDays,
   resetTime,
   setTime,
 } from './../../features/booking/bookingSlice';
 import {
-  addIncomes,
-  fetchClients,
   resetSelectedClient,
   setSelectedClient,
 } from '../../features/clients/clientsSlice';
 import dayjs from 'dayjs';
 import { useState } from 'react';
-import { createSubscription } from '../../features/clients/clientsSlice';
 import calculateEndSubscription from '../../features/utils/calculateEndSubscription';
+import {
+  createSubscription,
+  getAllActiveSubscriptions,
+} from '../../features/subscription/subscriptionSlice';
 
 const SubscriptionForm = () => {
   const dispatch = useDispatch();
   const confirmModal = useSelector((state) => state.modal);
   const booking = useSelector((state) => state.booking);
-  const selectedClient = useSelector((state) => state.clients.selectedClient);
+  const selectedClient = useSelector((state) => state.client.selectedClient);
   const trainingOptions = useSelector((state) => state.booking.trainigOptions);
-  const clients = useSelector((state) => state.clients.clients);
+  const clients = useSelector((state) => state.client.clients);
   const prices = useSelector((state) => state.booking.prices);
-  const error = useSelector((state) => state.clients.error);
   const modalFrom = useSelector((state) => state.modal.from);
-
   const [daysChoice, setDaysChoice] = useState(null);
   const [scheduleTrainings, setScheduleTrainings] = useState(false);
 
@@ -46,15 +47,7 @@ const SubscriptionForm = () => {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm({
-    defaultValues: {
-      client: '',
-      price: 0,
-      startDate: '',
-      time: '',
-      trainingNumbers: '',
-    },
-  });
+  } = useForm({});
 
   const onSubmit = async (data) => {
     delete data['time'];
@@ -67,7 +60,9 @@ const SubscriptionForm = () => {
       data.startDate,
       data.trainingNumbers
     );
-    const subscription = {
+    const subscriptionData = {
+      name: selectedClient.name,
+      clientId: selectedClient._id,
       trainingsTotal: data.trainingNumbers,
       trainingsDone: 0,
       trainingsRemain: data.trainingNumbers,
@@ -80,34 +75,18 @@ const SubscriptionForm = () => {
       price: data.price,
       trainingDays: booking.bookingDays,
     };
-
-    const reqData = {
-      name: selectedClient.name,
-      eamil: selectedClient.email,
-      phone: selectedClient.phone,
-      subscription: [subscription],
-    };
-
-    await dispatch(
-      createSubscription({ id: selectedClient._id, data: reqData })
-    );
-    if (error !== '') {
-      toast.success('Eroare! Te rog sa incerci din nou');
-    } else {
-      toast.success('Abonament atribuit');
-    }
-    await dispatch(addIncomes({ id: selectedClient._id, data: reqData }));
+    await dispatch(createSubscription(subscriptionData));
+    await dispatch(getAllActiveSubscriptions());
     await dispatch(resetBookingDays());
     await dispatch(resetTime());
     await dispatch(resetSelectedClient());
-    await dispatch(fetchClients());
     await dispatch(closeModal());
     reset();
     setScheduleTrainings(false);
   };
 
   const openSubmitModal = (data) => {
-    dispatch(setSelectedClient(data.client));
+    dispatch(setSelectedClient(data.clientId));
     dispatch(
       openModal({
         from: 'addSubscription',
@@ -118,22 +97,30 @@ const SubscriptionForm = () => {
     );
   };
 
+  const handleCloseSubmitModal = () => {
+    dispatch(resetSelectedClient());
+    dispatch(resetTime());
+    dispatch(resetBookingDays());
+    dispatch(setEmpty());
+    dispatch(closeModal());
+  };
+
   return (
     <>
       <div className='flex flex-col md:px-10 px-0 w-full'>
         <div className='flex flex-col w-full items-center mb-8'>
           <div className='text-3xl mb-10'>Atribuie Abonament</div>
           <div className='text-xl mb-4 w-full'>Detalii Abonament</div>
-          <form>
+          <form className='w-full'>
             <div className='flex md:flex-row flex-col text-md gap-2 self-center w-full'>
               <Select
-                id='client'
+                id='clientId'
                 register={register}
                 errors={errors}
                 required
                 label='Client'
                 extraClass='py-2 mb-1'
-                options={clients.map((client) => {
+                options={clients?.map((client) => {
                   return { id: client._id, value: client.name };
                 })}
               />
@@ -230,11 +217,11 @@ const SubscriptionForm = () => {
         <Modal
           isOpen={confirmModal.isOpen}
           title={confirmModal.title}
-          secondaryAction={() => dispatch(closeModal())}
+          secondaryAction={handleCloseSubmitModal}
           secondaryActionLabel='Inapoi'
           onSubmit={handleSubmit(onSubmit)}
           actionLabel='Confirma'
-          onClose={() => dispatch(closeModal())}
+          onClose={handleCloseSubmitModal}
           body={confirmModal.message}
           small
         />
