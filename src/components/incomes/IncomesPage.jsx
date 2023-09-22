@@ -48,16 +48,15 @@ const IncomesPage = () => {
       <div className='w-full md:mb-0 mb-10'>
         <div className='flex flex-col md:px-10 px-0 w-full'>
           <div className='text-3xl mb-10 text-center'>Incasari</div>
-          {incomes.length > 0 && (
+          {incomes !== undefined && incomes.length > 0 && (
             <>
               <div className='w-full flex flex-wrap'>
                 {incomes.length > 0 &&
                   filterYears().map((btn, i) => {
                     return (
-                      <div className='w-20 ml-2 mb-2'>
+                      <div className='w-20 ml-2 mb-2' key={i}>
                         <Button
                           onClick={() => setYearBtn(btn)}
-                          key={i}
                           label={btn}
                           small
                           bgClass={yearBtn === btn && 'bg-blue-600'}

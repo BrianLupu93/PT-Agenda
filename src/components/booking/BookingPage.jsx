@@ -11,24 +11,25 @@ import {
   resetBookingError,
   setTodayBookings,
 } from '../../features/booking/bookingSlice';
+import dayjs from 'dayjs';
+import { getAllSubscriptions } from '../../features/subscription/subscriptionSlice';
 
 const BookingPage = () => {
   const dispatch = useDispatch();
   const clientError = useSelector((state) => state.client.error);
   const bookingError = useSelector((state) => state.booking.error);
-  const allBookings = useSelector((state) => state.booking.allBookings);
-  const selectedDay = useSelector((state) => state.app.selectedDay);
+  const today = dayjs().format('DD/MM/YYYY');
+
+  const init = async () => {
+    await dispatch(getAllClients());
+    await dispatch(getAllBookings());
+    await dispatch(getAllSubscriptions());
+    await dispatch(setTodayBookings(today));
+  };
 
   useEffect(() => {
-    dispatch(getAllClients());
-    dispatch(getAllBookings());
+    init();
   }, []);
-
-  useEffect(() => {
-    if (allBookings !== undefined && allBookings.lenght > 0) {
-      dispatch(setTodayBookings(selectedDay));
-    }
-  }, [allBookings, selectedDay]);
 
   useEffect(() => {
     if (

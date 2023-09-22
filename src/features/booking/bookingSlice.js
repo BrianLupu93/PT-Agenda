@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { bookingUrl } from '../api/serverUrl';
 import axios from 'axios';
+import sortTodayBookings from '../utils/sortTodayBookings';
+import { toast } from 'react-hot-toast';
 
 export const getAllBookings = createAsyncThunk(
   'booking/getAllBookings',
@@ -57,6 +59,7 @@ const initialState = {
   trainigOptions: [12, 16, 36, 48],
   prices: [600, 800, 1800, 2400],
   error: '',
+  editBooking: {},
 };
 
 export const bookingSlice = createSlice({
@@ -87,10 +90,20 @@ export const bookingSlice = createSlice({
       if (state.allBookings.length === 0) {
         state.todayBookings = [];
       } else {
-        state.todayBookings = state.allBookings.filter(
+        const bookArr = state.allBookings.filter(
           (book) => book.day.day === action.payload
         );
+        state.todayBookings = sortTodayBookings(bookArr);
       }
+    },
+
+    setEditBooking: (state, action) => {
+      state.editBooking = state.todayBookings.find(
+        (book) => book._id === action.payload
+      );
+    },
+    resetEditBooking: (state) => {
+      state.editBooking = {};
     },
   },
   extraReducers: (builder) => {
@@ -133,29 +146,33 @@ export const bookingSlice = createSlice({
     builder.addCase(updateBooking.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(updateBooking.fulfilled, (state, action) => {
+    builder.addCase(updateBooking.fulfilled, (state) => {
+      toast.success('Programare reprogramata!');
       state.isLoading = false;
     });
     builder.addCase(updateBooking.rejected, (state, action) => {
       state.isLoading = false;
+      toast.error('Eroare! Te rugam sa incerci din nou.');
       state.error = action.error.message;
     });
     // deleteBooking
     builder.addCase(deleteBooking.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(deleteBooking.fulfilled, (state, action) => {
+    builder.addCase(deleteBooking.fulfilled, (state) => {
+      toast.success('Programare anulata!');
       state.isLoading = false;
     });
     builder.addCase(deleteBooking.rejected, (state, action) => {
       state.isLoading = false;
+      toast.error('Eroare! Te rugam sa incerci din nou.');
       state.error = action.error.message;
     });
     // deleteAllBooking
     builder.addCase(deleteAllBooking.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(deleteAllBooking.fulfilled, (state, action) => {
+    builder.addCase(deleteAllBooking.fulfilled, (state) => {
       state.isLoading = false;
     });
     builder.addCase(deleteAllBooking.rejected, (state, action) => {
@@ -173,5 +190,7 @@ export const {
   resetTime,
   resetBookingError,
   setTodayBookings,
+  setEditBooking,
+  resetEditBooking,
 } = bookingSlice.actions;
 export default bookingSlice.reducer;

@@ -12,6 +12,7 @@ import {
   closeModal,
   openModal,
   setEmpty,
+  setFrom,
 } from '../../features/modal/confirmModalSlice';
 import calculateEndSubscription from '../../features/utils/calculateEndSubscription';
 import Select from '../Utils/Select';
@@ -151,6 +152,7 @@ const SubscriptionsTable = () => {
     await dispatch(resetTime());
     await dispatch(resetSelecetdSubscription());
     await dispatch(closeModal());
+    await dispatch(setFrom(''));
     reset();
     setScheduleTrainings(false);
   };
@@ -161,12 +163,14 @@ const SubscriptionsTable = () => {
     dispatch(resetSelecetdSubscription());
     dispatch(closeModal());
     dispatch(setEmpty());
+    dispatch(setFrom(''));
     setScheduleTrainings(false);
   };
   // Close DETAIL modal from mobile
   const handleCloseDetailModal = () => {
     dispatch(resetSelecetdSubscription());
     dispatch(setEmpty());
+    dispatch(setFrom(''));
     dispatch(closeModal());
   };
 
@@ -197,6 +201,7 @@ const SubscriptionsTable = () => {
     dispatch(resetSelecetdSubscription());
     dispatch(closeModal());
     dispatch(setEmpty());
+    dispatch(setFrom(''));
   };
 
   const handleDeleteSubscription = async () => {
@@ -206,6 +211,7 @@ const SubscriptionsTable = () => {
     dispatch(resetSelecetdSubscription());
     dispatch(setEmpty());
     dispatch(closeModal());
+    dispatch(setFrom(''));
   };
 
   // =========================================================

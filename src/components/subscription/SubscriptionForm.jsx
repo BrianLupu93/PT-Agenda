@@ -11,6 +11,7 @@ import {
   closeModal,
   openModal,
   setEmpty,
+  setFrom,
 } from './../../features/modal/confirmModalSlice';
 import {
   createBooking,
@@ -81,6 +82,7 @@ const SubscriptionForm = () => {
     await dispatch(resetTime());
     await dispatch(resetSelectedClient());
     await dispatch(closeModal());
+    await dispatch(setFrom(''));
     reset();
     setScheduleTrainings(false);
   };
@@ -100,6 +102,7 @@ const SubscriptionForm = () => {
   const handleCloseSubmitModal = () => {
     dispatch(resetSelectedClient());
     dispatch(resetTime());
+    dispatch(setFrom(''));
     dispatch(resetBookingDays());
     dispatch(setEmpty());
     dispatch(closeModal());

@@ -44,9 +44,13 @@ const BookingModalBody = () => {
             required
             label='Client'
             extraClass='py-2 mb-1'
-            options={subscriptions.map((subscription) => {
-              return { id: subscription.clientId, value: subscription.name };
-            })}
+            options={
+              subscriptions !== undefined &&
+              subscriptions.length > 0 &&
+              subscriptions.map((subscription) => {
+                return { id: subscription.clientId, value: subscription.name };
+              })
+            }
             onChangeCapture={(e) =>
               dispatch(setSelectedSubscription(e.target.value))
             }

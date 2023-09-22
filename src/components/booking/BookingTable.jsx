@@ -2,7 +2,6 @@ import { BsFillCalendarDateFill } from 'react-icons/bs';
 import { GrStatusGoodSmall } from 'react-icons/gr';
 import { MdDeleteForever } from 'react-icons/md';
 import Modal from '../Utils/modal/Modal';
-import { toast } from 'react-hot-toast';
 import { useForm } from 'react-hook-form';
 import BookingModalBody from '../Utils/modal/BookingModalBody';
 import { useSelector, useDispatch } from 'react-redux';
@@ -15,18 +14,28 @@ import {
 } from '../../features/modal/confirmModalSlice';
 
 import {
+  deleteBooking,
+  getAllBookings,
   resetBookingDays,
   resetTime,
+  updateBooking,
+  setEditBooking,
+  resetEditBooking,
 } from '../../features/booking/bookingSlice';
-import { resetSelectedClient } from '../../features/clients/clientsSlice';
+import {
+  resetSelectedClient,
+  setSelectedClient,
+} from '../../features/clients/clientsSlice';
+import { getAllActiveSubscriptions } from '../../features/subscription/subscriptionSlice';
 
 const BookingTable = () => {
   const dispatch = useDispatch();
   const confirmModal = useSelector((state) => state.modal);
   const selectedDay = useSelector((state) => state.app.selectedDay);
-  const bookingDays = useSelector((state) => state.booking.bookingDays);
   const todayBookings = useSelector((state) => state.booking.todayBookings);
+  const selectedBooking = useSelector((state) => state.booking.editBooking);
   const selectedClient = useSelector((state) => state.client.selectedClient);
+  const booking = useSelector((state) => state.booking);
 
   const {
     handleSubmit,
@@ -36,7 +45,8 @@ const BookingTable = () => {
   // ------------------- MODAL -----------------------
   // -------------------------------------------------
 
-  const onDelete = (day, id) => {
+  const onDelete = (id) => {
+    dispatch(setEditBooking(id));
     dispatch(
       openModal({
         from: 'deleteBooking',
@@ -46,7 +56,10 @@ const BookingTable = () => {
       })
     );
   };
-  const onUpdate = (id, day) => {
+
+  const onUpdate = async (id, clientId) => {
+    dispatch(setEditBooking(id));
+    dispatch(setSelectedClient(clientId));
     dispatch(
       openModal({
         from: 'updateBooking',
@@ -57,6 +70,9 @@ const BookingTable = () => {
   };
 
   const onDeleteSubmit = async () => {
+    await dispatch(deleteBooking(selectedBooking._id));
+    await dispatch(getAllActiveSubscriptions());
+    await dispatch(getAllBookings());
     dispatch(resetSelectedClient());
     dispatch(setFrom(''));
     dispatch(setEmpty());
@@ -64,8 +80,20 @@ const BookingTable = () => {
   };
 
   const onUpdateSubmit = async () => {
+    const bookData = {
+      name: selectedClient.name,
+      clientId: selectedClient._id,
+      subscriptionId: selectedBooking.subscriptionId,
+      day: booking.bookingDays[0],
+    };
+
+    await dispatch(updateBooking({ id: selectedBooking._id, data: bookData }));
+    await dispatch(getAllActiveSubscriptions());
+    await dispatch(getAllBookings());
+
     dispatch(resetSelectedClient());
     dispatch(resetBookingDays());
+    dispatch(resetEditBooking());
     dispatch(resetTime());
     dispatch(setFrom(''));
     dispatch(setEmpty());
@@ -78,12 +106,15 @@ const BookingTable = () => {
     dispatch(resetTime());
     dispatch(setFrom(''));
     dispatch(setEmpty());
+    dispatch(resetBookingDays());
+    dispatch(resetEditBooking());
   };
 
   const handleCloseUpdateModal = () => {
     dispatch(closeModal());
     dispatch(resetSelectedClient());
     dispatch(resetBookingDays());
+    dispatch(resetEditBooking());
     dispatch(resetTime());
     dispatch(setFrom(''));
     dispatch(setEmpty());
@@ -92,7 +123,15 @@ const BookingTable = () => {
   // ------------------- TABLE ITEM ---------------------
   // ----------------------------------------------------
 
-  const TableItem = ({ count, status, extraClass, name, time, id, day }) => {
+  const TableItem = ({
+    count,
+    status,
+    extraClass,
+    name,
+    time,
+    id,
+    clientId,
+  }) => {
     return (
       <>
         <tr
@@ -104,13 +143,13 @@ const BookingTable = () => {
             <GrStatusGoodSmall size={20} color={status ? 'red' : 'green'} />
           </td>
           <td className='flex justify-center'>
-            <button onClick={() => onUpdate(id, day)}>
+            <button onClick={() => onUpdate(id, clientId)}>
               <BsFillCalendarDateFill
                 size={20}
                 className='text-blue-600 hover:text-black mx-2'
               />
             </button>
-            <button onClick={() => onDelete(day, id)}>
+            <button onClick={() => onDelete(id)}>
               <MdDeleteForever
                 size={24}
                 className='text-rose-500 hover:text-black mx-2'
@@ -126,7 +165,7 @@ const BookingTable = () => {
     <>
       <div className='flex flex-col md:px-10 px-0 w-full mx-auto'>
         <div className='flex flex-col items-center justify-center mb-9'>
-          <div className='text-md'>{selectedDay.selectedDay}</div>
+          <div className='text-md'>{selectedDay}</div>
           <div className='text-3xl'>Program</div>
         </div>
         <div>
@@ -148,7 +187,8 @@ const BookingTable = () => {
                       name={book.name}
                       time={book.day.time}
                       status={book.day.done}
-                      id={book.subscriptionId}
+                      id={book._id}
+                      clientId={book.clientId}
                       day={book.day.day}
                       key={i}
                       count={i + 1}

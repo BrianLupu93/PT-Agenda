@@ -9,6 +9,7 @@ import {
   openModal,
   closeModal,
   setEmpty,
+  setFrom,
 } from '../../features/modal/confirmModalSlice';
 import {
   createClient,
@@ -41,6 +42,7 @@ const ClientsForm = ({ headline, buttonLabel }) => {
     reset();
     dispatch(closeModal());
     dispatch(setEmpty());
+    dispatch(setFrom());
   };
 
   const openAddClientModal = () => {
@@ -64,6 +66,7 @@ const ClientsForm = ({ headline, buttonLabel }) => {
     dispatch(resetSelectedClient());
     dispatch(setEmpty());
     dispatch(closeModal());
+    dispatch(setFrom());
   };
 
   return (

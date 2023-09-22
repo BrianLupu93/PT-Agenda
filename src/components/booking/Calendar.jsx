@@ -17,7 +17,11 @@ import BookingModalBody from '../Utils/modal/BookingModalBody';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedDay } from '../../features/app/appSlice';
-import { closeModal, openModal } from '../../features/modal/confirmModalSlice';
+import {
+  closeModal,
+  openModal,
+  setFrom,
+} from '../../features/modal/confirmModalSlice';
 import {
   createBooking,
   getAllBookings,
@@ -63,7 +67,6 @@ const Calendar = () => {
   // -------- SELECTED DAY ---------
   useEffect(() => {
     dispatch(setSelectedDay(today));
-    // dispatch(fetchTodayBookings(today));
   }, []);
 
   // -------- CHANGE MONTH ---------
@@ -187,7 +190,7 @@ const Calendar = () => {
       })
     );
     bookingDays.forEach(async (bookDay) => {
-      dispatch(
+      await dispatch(
         createBooking({
           name: selectedSubscription.name,
           clientId: selectedSubscription.clientId,
@@ -197,9 +200,11 @@ const Calendar = () => {
       );
     });
     await dispatch(getAllBookings());
+    await dispatch(setTodayBookings(today));
     await dispatch(closeModal());
     await dispatch(resetBookingDays());
     await dispatch(resetTime());
+    await dispatch(setFrom());
     await dispatch(resetSelectedClient());
 
     reset();
@@ -210,6 +215,7 @@ const Calendar = () => {
     dispatch(resetBookingDays());
     dispatch(resetTime());
     dispatch(resetSelectedClient());
+    dispatch(setFrom());
   };
 
   const openBookingModal = async () => {

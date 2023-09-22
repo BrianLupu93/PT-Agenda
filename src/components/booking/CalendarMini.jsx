@@ -78,7 +78,6 @@ const CalendarMini = () => {
           addBookingDay({
             day: newSelectedDay,
             time: booking.time,
-            done: false,
           })
         );
       }

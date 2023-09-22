@@ -6,7 +6,7 @@ import { toast } from 'react-hot-toast';
 export const getAllSubscriptions = createAsyncThunk(
   'subscriptions/getAllSubscriptions',
   async () => {
-    const res = await axios.get(incomesUrl);
+    const res = await axios.get(subscriptionsUrl);
     const data = await res.data;
     return data;
   }
@@ -79,7 +79,6 @@ export const subscriptionSlice = createSlice({
       const sub = state.activeSubscriptions.find(
         (sub) => sub.clientId === action.payload
       );
-
       state.selectedSubscription = sub === undefined ? {} : sub;
     },
     resetSelecetdSubscription: (state) => {

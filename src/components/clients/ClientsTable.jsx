@@ -9,6 +9,7 @@ import {
   openModal,
   closeModal,
   setEmpty,
+  setFrom,
 } from '../../features/modal/confirmModalSlice';
 
 import { paginate } from '../../features/utils/paginate';
@@ -66,6 +67,7 @@ const ClientsTable = () => {
   const handleDeleteClient = async () => {
     await dispatch(deleteClient(selectedClient._id));
     await dispatch(getAllClients());
+    dispatch(setFrom());
     dispatch(closeModal());
     dispatch(setEmpty());
     dispatch(resetSelectedClient());
