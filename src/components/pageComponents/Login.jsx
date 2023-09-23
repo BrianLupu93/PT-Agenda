@@ -57,7 +57,13 @@ const Login = () => {
   };
 
   return (
-    <div className='w-full h-full flex flex-col items-center mt-40'>
+    <div className='w-full h-full flex flex-col items-center mt-40 md:px-0 px-4'>
+      <div className='text-4xl font-bold text-blue-600 italic'>
+        Sm<span className='text-rose-500'>a</span>rt
+      </div>
+      <div className='text-sm font-bold text-zinc-600 mb-10 italic'>
+        personal trainers manager tool
+      </div>
       <div className='flex flex-col gap-4 md:w-96 w-full md:h-3/5 w-full border border-neutral-300 rounded-md shadow p-6 bg-white '>
         <div className='w-full text-xl text-center mb-8'>Autentificare</div>
         <Input

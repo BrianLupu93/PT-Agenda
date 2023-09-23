@@ -13,15 +13,19 @@ const ClientsPage = () => {
   const clients = useSelector((state) => state.client.clients);
   const clientsError = useSelector((state) => state.client.error);
 
+  const logout = async () => {
+    await localStorage.clear();
+    await dispatch(resetClientError());
+    await dispatch(setLogout());
+  };
+
   useEffect(() => {
     dispatch(getAllClients());
   }, []);
 
   useEffect(() => {
     if (clientsError === 'Request failed with status code 403') {
-      localStorage.clear();
-      dispatch(resetClientError());
-      dispatch(setLogout());
+      logout();
     }
   }, [clientsError]);
 

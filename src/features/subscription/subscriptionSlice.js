@@ -74,7 +74,6 @@ export const subscriptionSlice = createSlice({
     resetSubscriptionError: (state) => {
       state.error = '';
     },
-
     setSelectedSubscription: (state, action) => {
       const sub = state.activeSubscriptions.find(
         (sub) => sub.clientId === action.payload

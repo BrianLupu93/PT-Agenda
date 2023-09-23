@@ -13,13 +13,13 @@ function App() {
   let content = auth.isLoggedIn ? <Page /> : <Login />;
 
   return (
-    <div className=''>
+    <>
       {auth.isLoggedIn && <Navbar />}
       <Toaster />
       <EditClientModal />
       <div>{content}</div>
       {auth.isLoggedIn && <Footer />}
-    </div>
+    </>
   );
 }
 

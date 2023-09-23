@@ -5,7 +5,10 @@ import { useEffect } from 'react';
 import { resetClientError } from '../../features/clients/clientsSlice';
 import { setLogout } from '../../features/auth/authSlice';
 import { resetBookingError } from '../../features/booking/bookingSlice';
-import { getAllActiveSubscriptions } from '../../features/subscription/subscriptionSlice';
+import {
+  getAllActiveSubscriptions,
+  resetSubscriptionError,
+} from '../../features/subscription/subscriptionSlice';
 
 const SubscriptionPage = () => {
   const dispatch = useDispatch();
@@ -14,6 +17,15 @@ const SubscriptionPage = () => {
   );
   const clientsError = useSelector((state) => state.client.error);
   const bookingsError = useSelector((state) => state.booking.error);
+  const subscriptionError = useSelector((state) => state.subscription.error);
+
+  const logout = async () => {
+    await localStorage.clear();
+    await dispatch(resetBookingError());
+    await dispatch(resetClientError());
+    await dispatch(resetSubscriptionError());
+    await dispatch(setLogout());
+  };
 
   useEffect(() => {
     dispatch(getAllActiveSubscriptions());
@@ -22,14 +34,12 @@ const SubscriptionPage = () => {
   useEffect(() => {
     if (
       clientsError === 'Request failed with status code 403' ||
-      clientsError === 'Request failed with status code 403'
+      clientsError === 'Request failed with status code 403' ||
+      subscriptionError === 'Request failed with status code 403'
     ) {
-      localStorage.clear();
-      dispatch(resetBookingError());
-      dispatch(resetClientError());
-      dispatch(setLogout());
+      logout();
     }
-  }, [clientsError, bookingsError]);
+  }, [clientsError, bookingsError, subscriptionError]);
 
   return (
     <div className='h-full md:w-9/12 w-full mx-auto flex flex-col'>

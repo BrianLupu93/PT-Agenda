@@ -12,12 +12,17 @@ import {
   setTodayBookings,
 } from '../../features/booking/bookingSlice';
 import dayjs from 'dayjs';
-import { getAllSubscriptions } from '../../features/subscription/subscriptionSlice';
+import {
+  getAllSubscriptions,
+  resetSubscriptionError,
+} from '../../features/subscription/subscriptionSlice';
+import { setLogout } from '../../features/auth/authSlice';
 
 const BookingPage = () => {
   const dispatch = useDispatch();
   const clientError = useSelector((state) => state.client.error);
   const bookingError = useSelector((state) => state.booking.error);
+  const subscriptionError = useSelector((state) => state.subscription.error);
   const today = dayjs().format('DD/MM/YYYY');
 
   const init = async () => {
@@ -27,6 +32,14 @@ const BookingPage = () => {
     await dispatch(setTodayBookings(today));
   };
 
+  const logout = async () => {
+    await localStorage.clear();
+    await dispatch(resetBookingError());
+    await dispatch(resetClientError());
+    await dispatch(resetSubscriptionError());
+    await dispatch(setLogout());
+  };
+
   useEffect(() => {
     init();
   }, []);
@@ -34,14 +47,12 @@ const BookingPage = () => {
   useEffect(() => {
     if (
       clientError === 'Request failed with status code 403' ||
-      bookingError === 'Request failed with status code 403'
+      bookingError === 'Request failed with status code 403' ||
+      subscriptionError === 'Request failed with status code 403'
     ) {
-      localStorage.clear();
-      dispatch(resetBookingError());
-      dispatch(resetClientError());
-      dispatch(setLogout());
+      logout();
     }
-  }, [bookingError, clientError]);
+  }, [bookingError, clientError, subscriptionError]);
 
   return (
     <div className='w-full flex md:flex-row flex-col '>

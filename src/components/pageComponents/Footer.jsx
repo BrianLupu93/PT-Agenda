@@ -28,6 +28,10 @@ const Footer = () => {
         />
       </button>
 
+      <div className='font-bold text-blue-500 text-lg italic'>
+        Sm<span className='text-rose-500'>a</span>rt
+      </div>
+
       <button className='bg-white hover:bg-rose-500 rounded-full p-1'>
         <BiLogOut size={24} className='text-black' onClick={handleLogout} />
       </button>

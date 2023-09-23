@@ -3,19 +3,36 @@ import Button from '../Utils/Button';
 import { useDispatch, useSelector } from 'react-redux';
 import {} from '../../features/clients/clientsSlice';
 import dayjs from 'dayjs';
-import { getAllIncomes } from '../../features/income/incomeSlice';
+import {
+  getAllIncomes,
+  resetIncomeError,
+} from '../../features/income/incomeSlice';
 import { months } from '../../data/dataVariables';
+import { setLogout } from '../../features/auth/authSlice';
 
 const IncomesPage = () => {
   const dispatch = useDispatch();
   const incomes = useSelector((state) => state.income.incomes);
   const [yearBtn, setYearBtn] = useState();
   const thisYear = dayjs().year().toString();
+  const incomeError = useSelector((state) => state.income.error);
+
+  const logout = async () => {
+    await localStorage.clear();
+    await dispatch(resetIncomeError());
+    await dispatch(setLogout());
+  };
 
   useEffect(() => {
     dispatch(getAllIncomes());
     setYearBtn(thisYear);
   }, []);
+
+  useEffect(() => {
+    if (incomeError === 'Request failed with status code 403') {
+      logout();
+    }
+  }, [incomeError]);
 
   const filterYears = () => {
     const years = [];
@@ -68,7 +85,7 @@ const IncomesPage = () => {
               <div className='w-full text-center text-xl font-bold'>
                 {/* {income !== {} && income.year} */}
               </div>
-              <div className='w-full mt-8 border border-black rounded-md p-4'>
+              <div className='w-full mt-8 border shadow-md rounded-md p-4'>
                 {incomes.length > 0 &&
                   filterMonths(yearBtn).map((month, i) => {
                     let total = 0;
@@ -82,7 +99,7 @@ const IncomesPage = () => {
                     });
                     return (
                       <div key={i}>
-                        <div className='text-xl bg-gray-300 py-1 px-2 rounded-md mb-4'>
+                        <div className='text-xl bg-zinc-300 py-1 px-2 rounded-md mb-4'>
                           {month}
                         </div>
                         {incomes.map((income, i) => {

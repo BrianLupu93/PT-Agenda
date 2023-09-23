@@ -27,7 +27,11 @@ const initialState = {
 export const incomeSlice = createSlice({
   name: 'incomes',
   initialState,
-  reducers: {},
+  reducers: {
+    resetIncomeError: (state) => {
+      state.error = '';
+    },
+  },
   extraReducers: (builder) => {
     // getAllIncomes
     builder.addCase(getAllIncomes.pending, (state) => {
@@ -56,5 +60,5 @@ export const incomeSlice = createSlice({
   },
 });
 
-export const {} = incomeSlice.actions;
+export const { resetIncomeError } = incomeSlice.actions;
 export default incomeSlice.reducer;
