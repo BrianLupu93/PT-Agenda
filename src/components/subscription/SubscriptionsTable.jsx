@@ -227,7 +227,7 @@ const SubscriptionsTable = () => {
     reBooked,
     startDate,
     endDate,
-    status,
+    alertMessage,
     id,
   }) => {
     const start = Array.from(startDate)
@@ -250,11 +250,11 @@ const SubscriptionsTable = () => {
         <td className='md:block hidden'>{end}</td>
         <td
           className={
-            status === 'ACTIV'
-              ? 'text-green-500 font-bold'
-              : 'text-rose-500 font-bold'
+            alertMessage === 'ACTIV'
+              ? 'text-green-500 font-bold text-xs'
+              : 'text-rose-500 font-bold text-xs'
           }>
-          {status}
+          {alertMessage}
         </td>
         <td className='flex justify-center'>
           {isMobile ? (
@@ -509,7 +509,7 @@ const SubscriptionsTable = () => {
                       reBooked={subscription.trainingsReBooked}
                       startDate={subscription.startDate}
                       endDate={subscription.endDate}
-                      status={subscription.isActive ? 'ACTIV' : 'Expira Astazi'}
+                      alertMessage={subscription.alertMessage}
                       key={i}
                       extraClass={count % 2 !== 0 ? 'bg-zinc-100' : ''}
                     />

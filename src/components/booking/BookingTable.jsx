@@ -21,6 +21,7 @@ import {
   updateBooking,
   setEditBooking,
   resetEditBooking,
+  setTodayBookings,
 } from '../../features/booking/bookingSlice';
 import {
   resetSelectedClient,
@@ -73,6 +74,7 @@ const BookingTable = () => {
     await dispatch(deleteBooking(selectedBooking._id));
     await dispatch(getAllActiveSubscriptions());
     await dispatch(getAllBookings());
+    await dispatch(setTodayBookings(selectedDay));
     dispatch(resetSelectedClient());
     dispatch(setFrom(''));
     dispatch(setEmpty());
@@ -86,11 +88,10 @@ const BookingTable = () => {
       subscriptionId: selectedBooking.subscriptionId,
       day: booking.bookingDays[0],
     };
-
     await dispatch(updateBooking({ id: selectedBooking._id, data: bookData }));
     await dispatch(getAllActiveSubscriptions());
     await dispatch(getAllBookings());
-
+    await dispatch(setTodayBookings(selectedDay));
     dispatch(resetSelectedClient());
     dispatch(resetBookingDays());
     dispatch(resetEditBooking());
