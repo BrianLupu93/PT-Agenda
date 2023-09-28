@@ -12,7 +12,7 @@ const Footer = () => {
   const handleLogout = () => {
     localStorage.clear();
     dispatch(setLogout());
-    toast.success('Delogare cu succes!');
+    toast.success('Sucess Logout!');
   };
 
   return (

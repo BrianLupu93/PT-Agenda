@@ -76,7 +76,7 @@ const ClientsForm = ({ headline, buttonLabel }) => {
           <div className='flex md:flex-row flex-col text-md gap-2 w-full'>
             <Input
               id='name'
-              label='Last Name and First Name'
+              label='Client name'
               type='text'
               extraClass='py-1 mb-1'
               register={register}

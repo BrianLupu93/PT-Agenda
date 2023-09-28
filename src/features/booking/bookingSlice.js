@@ -147,12 +147,12 @@ export const bookingSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(updateBooking.fulfilled, (state) => {
-      toast.success('Programare reprogramata!');
+      toast.success('Booking Rescheduled!');
       state.isLoading = false;
     });
     builder.addCase(updateBooking.rejected, (state, action) => {
       state.isLoading = false;
-      toast.error('Eroare! Te rugam sa incerci din nou.');
+      toast.error('Error! Please try again.');
       state.error = action.error.message;
     });
     // deleteBooking
@@ -160,12 +160,12 @@ export const bookingSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(deleteBooking.fulfilled, (state) => {
-      toast.success('Programare anulata!');
+      toast.success('Booking deleted!');
       state.isLoading = false;
     });
     builder.addCase(deleteBooking.rejected, (state, action) => {
       state.isLoading = false;
-      toast.error('Eroare! Te rugam sa incerci din nou.');
+      toast.error('Error! Please try again.');
       state.error = action.error.message;
     });
     // deleteAllBooking

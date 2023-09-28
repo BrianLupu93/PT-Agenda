@@ -93,12 +93,12 @@ export const clientsSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(createClient.fulfilled, (state) => {
-      toast.success('Client nou adaugat.');
+      toast.success('New client added.');
       state.isLoading = false;
     });
     builder.addCase(createClient.rejected, (state, action) => {
       state.isLoading = false;
-      toast.error('Eroare! Te rugam sa incerci din nou.');
+      toast.error('Error! Please try again.');
       state.error = action.error.message;
     });
     // updateClient
@@ -106,12 +106,12 @@ export const clientsSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(updateClient.fulfilled, (state) => {
-      toast.success('Date client actualizate.');
+      toast.success('Client data updated.');
       state.isLoading = false;
     });
     builder.addCase(updateClient.rejected, (state, action) => {
       state.isLoading = false;
-      toast.error('Eroare! Te rugam sa incerci din nou.');
+      toast.error('Error! Please try again.');
       state.error = action.error.message;
     });
     // deleteClient
@@ -119,12 +119,12 @@ export const clientsSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(deleteClient.fulfilled, (state) => {
-      toast.success('Clientul a fost sters definitiv.');
+      toast.success('Client was deleted.');
       state.isLoading = false;
     });
     builder.addCase(deleteClient.rejected, (state, action) => {
       state.isLoading = false;
-      toast.error('Eroare! Te rugam sa incerci din nou.');
+      toast.error('Error! Please try again.');
       state.error = action.error.message;
     });
   },

@@ -126,12 +126,12 @@ export const subscriptionSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(createSubscription.fulfilled, (state) => {
-      toast.success('Abonamet inregistrat!');
+      toast.success('Subscription added!');
       state.isLoading = false;
     });
     builder.addCase(createSubscription.rejected, (state, action) => {
       state.isLoading = false;
-      toast.error('Erroare! Te rugam sa incerci din nou.');
+      toast.error('Error! Please try again.');
       state.error = action.error.message;
     });
     // updateSubscription
@@ -139,12 +139,12 @@ export const subscriptionSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(updateSubscription.fulfilled, (state) => {
-      toast.success('Abonamentul a fost actualizat!');
+      toast.success('Subscription updated!');
       state.isLoading = false;
     });
     builder.addCase(updateSubscription.rejected, (state, action) => {
       state.isLoading = false;
-      toast.error('Erroare! Te rugam sa incerci din nou.');
+      toast.error('Error! Please try again.');
       state.error = action.error.message;
     });
     // updateExpiredSubscription
@@ -152,12 +152,12 @@ export const subscriptionSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(updateExpiredSubscription.fulfilled, (state) => {
-      toast.success('Abonamentul a fost reinoit!');
+      toast.success('Subscription refreshed.');
       state.isLoading = false;
     });
     builder.addCase(updateExpiredSubscription.rejected, (state, action) => {
       state.isLoading = false;
-      toast.error('Erroare! Te rugam sa incerci din nou.');
+      toast.error('Error! Please try again.');
       state.error = action.error.message;
     });
     // deleteSubscruption
@@ -165,12 +165,12 @@ export const subscriptionSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(deleteSubscription.fulfilled, (state) => {
-      toast.success('Abonamentul a fost sters.');
+      toast.success('Subscription deleted.');
       state.isLoading = false;
     });
     builder.addCase(deleteSubscription.rejected, (state, action) => {
       state.isLoading = false;
-      toast.error('Erroare! Te rugam sa incerci din nou.');
+      toast.error('Error! Please try again.');
       state.error = action.error.message;
     });
   },

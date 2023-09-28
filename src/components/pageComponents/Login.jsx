@@ -45,10 +45,10 @@ const Login = () => {
         setAuthHeader();
         dispatch(setLogin(data));
         reset();
-        toast.success('Autentificare reusita!');
+        toast.success('Success Login!');
       })
       .catch(() => {
-        toast.error('Username sau Parola gresita!');
+        toast.error('Wrong username or password!');
         reset();
       })
       .finally(() => {

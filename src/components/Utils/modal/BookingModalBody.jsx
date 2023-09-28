@@ -59,7 +59,7 @@ const BookingModalBody = () => {
 
         <Select
           id='time'
-          label='Interval Orar'
+          label='Time'
           options={timeRanges}
           extraClass='py-2 mb-4 flex'
           register={register}
@@ -72,7 +72,7 @@ const BookingModalBody = () => {
       <CalendarMini />
       <div className='flex md:flex-row flex-col mt-2 gap-2 justify-center w-full'>
         <div className='w-full text-center text-red-500'>
-          Sedinte Programate:
+          Scheduled Trainings:
           <span className='font-bold pl-2'>
             {Object.keys(selectedSubscription).length > 0
               ? selectedSubscription.trainingsScheduled +
@@ -83,7 +83,7 @@ const BookingModalBody = () => {
           </span>
         </div>
         <div className='w-full text-center text-blue-600'>
-          Sedinte Restante:
+          Trainings to schedule:
           <span className='font-bold pl-2'>
             {Object.keys(selectedSubscription).length > 0
               ? selectedSubscription.trainingsToSchedule -
