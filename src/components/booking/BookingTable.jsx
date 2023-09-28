@@ -52,8 +52,8 @@ const BookingTable = () => {
       openModal({
         from: 'deleteBooking',
         message:
-          'Sunteti sigur ca doriti sa stergeti definitiv programarea? Datele programarii se vor sterge definitiv!',
-        title: 'Sterge Programarea',
+          'Are you sure to delete the booking? The booking data will be deleted!',
+        title: 'Delete Booking',
       })
     );
   };
@@ -65,7 +65,7 @@ const BookingTable = () => {
       openModal({
         from: 'updateBooking',
         message: '',
-        title: 'Reprogrameaza sedinta',
+        title: 'Reschedule the booking',
       })
     );
   };
@@ -167,7 +167,7 @@ const BookingTable = () => {
       <div className='flex flex-col md:px-10 px-0 w-full mx-auto'>
         <div className='flex flex-col items-center justify-center mb-9'>
           <div className='text-md'>{selectedDay}</div>
-          <div className='text-3xl'>Program</div>
+          <div className='text-3xl'>Bookings</div>
         </div>
         <div>
           <table className='rounded-sm bg-white w-full shadow-md'>
@@ -175,9 +175,9 @@ const BookingTable = () => {
               <tr className='grid grid-cols-5 grid-flow-col gap-1 py-2 font-bold text-center'>
                 <td>Nr.</td>
                 <td>Client</td>
-                <td>Ora</td>
+                <td>Time</td>
                 <td>Status</td>
-                <td>Editare</td>
+                <td>Edit</td>
               </tr>
             </thead>
             {todayBookings.length > 0 && (
@@ -202,7 +202,7 @@ const BookingTable = () => {
           </table>
           {todayBookings.length === 0 && (
             <div className='mt-10 w-full text-center text-xl text-rose-500'>
-              Nu exista sedinte programate pentru data selectata!
+              There are no booking for the selected day
             </div>
           )}
         </div>
@@ -212,9 +212,9 @@ const BookingTable = () => {
           isOpen={confirmModal.isOpen}
           title={confirmModal.title}
           secondaryAction={handleCloseModal}
-          secondaryActionLabel='Inapoi'
+          secondaryActionLabel='Back'
           onSubmit={onDeleteSubmit}
-          actionLabel='Confirma'
+          actionLabel='Confirm'
           onClose={handleCloseModal}
           body={confirmModal.message}
           small
@@ -225,9 +225,9 @@ const BookingTable = () => {
           isOpen={confirmModal.isOpen}
           title={confirmModal.title}
           secondaryAction={handleCloseUpdateModal}
-          secondaryActionLabel='Inapoi'
+          secondaryActionLabel='Back'
           onSubmit={handleSubmit(onUpdateSubmit)}
-          actionLabel='Reprogrameaza'
+          actionLabel='Reschedule'
           small
           onClose={handleCloseUpdateModal}
           body={<BookingModalBody />}

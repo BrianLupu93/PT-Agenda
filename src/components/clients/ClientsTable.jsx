@@ -56,9 +56,9 @@ const ClientsTable = () => {
     dispatch(
       openModal({
         from: 'deleteClient',
-        title: 'Sterge client',
+        title: 'Delete Client',
         message:
-          'Sunteti sigur ca doriti sa stergeti definitiv clientul? Datele vor fi sterge definitiv!',
+          'Are you sure to delete the client? The client data will be deleted.',
       })
     );
     dispatch(setSelectedClient(id));
@@ -116,11 +116,11 @@ const ClientsTable = () => {
     <>
       <div className='flex flex-col md:px-10 px-0 w-full mx-auto'>
         <div className='flex flex-col items-center justify-center mb-10'>
-          <div className='text-3xl'>Clienti</div>
+          <div className='text-3xl'>Clients</div>
         </div>
         <div className='flex justify-center items-center mb-2'>
           <input
-            placeholder='Nume Client'
+            placeholder='Client name'
             className='md:w-3/12 w-8/12 border border-rose-500 rounded-md px-2'
             onChange={(e) => handleSearchClient(e)}
           />
@@ -131,10 +131,10 @@ const ClientsTable = () => {
           <table className='rounded-sm bg-white w-full shadow-md'>
             <thead className='border-b-4'>
               <tr className='grid md:grid-cols-4 grid-cols-3 grid-flow-col gap-1 py-2 font-bold pl-4'>
-                <td>Nume</td>
-                <td>Telefon</td>
+                <td>Name</td>
+                <td>Phone</td>
                 <td className='md:block hidden'>Email</td>
-                <td>Editare</td>
+                <td>Edit</td>
               </tr>
             </thead>
             <tbody>
@@ -195,9 +195,9 @@ const ClientsTable = () => {
           isOpen={confirmModal.isOpen}
           title={confirmModal.title}
           secondaryAction={() => dispatch(closeModal())}
-          secondaryActionLabel='Inapoi'
+          secondaryActionLabel='Back'
           onSubmit={handleDeleteClient}
-          actionLabel='Confirma'
+          actionLabel='Confirm'
           onClose={() => dispatch(closeModal())}
           body={confirmModal.message}
           small
@@ -208,10 +208,10 @@ const ClientsTable = () => {
           isOpen={confirmModal.isOpen}
           title={confirmModal.title}
           secondaryAction={() => dispatch(closeModal())}
-          secondaryActionLabel='Inapoi'
-          actionLabel='Confirma'
+          secondaryActionLabel='Back'
+          actionLabel='Confirm'
           onClose={() => dispatch(closeModal())}
-          body={<ClientsForm buttonLabel='Actualizeata' />}
+          body={<ClientsForm buttonLabel='Upddate' />}
           small
         />
       )}

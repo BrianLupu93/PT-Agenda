@@ -26,7 +26,7 @@ const Navbar = () => {
           <Button
             bgClass={page === 'clients' ? 'bg-blue-700' : ''}
             borderClass={page === 'clients' ? 'border-blue-700' : ''}
-            label='Clienti'
+            label='Clients'
             onClick={() => handlePage('clients')}
             small
           />
@@ -35,7 +35,7 @@ const Navbar = () => {
           <Button
             bgClass={page === 'subscriptions' ? 'bg-blue-700' : ''}
             borderClass={page === 'subscriptions' ? 'border-blue-700' : ''}
-            label='Abonamente'
+            label='Subscriptions'
             onClick={() => handlePage('subscriptions')}
             small
           />

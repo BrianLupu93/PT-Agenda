@@ -24,7 +24,7 @@ const Page = () => {
     setContent(content);
   }, [page]);
 
-  return <div className='pt-24 pb-24 md:px-16 px-4 bg-zinc-100'>{content}</div>;
+  return <div className='pt-24 pb-24 md:px-16 px-4'>{content}</div>;
 };
 
 export default Page;

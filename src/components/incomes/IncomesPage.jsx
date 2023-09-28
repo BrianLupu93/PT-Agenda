@@ -64,7 +64,7 @@ const IncomesPage = () => {
     <div className='h-full md:w-9/12 w-full mx-auto flex flex-col'>
       <div className='w-full md:mb-0 mb-10'>
         <div className='flex flex-col md:px-10 px-0 w-full'>
-          <div className='text-3xl mb-10 text-center'>Incasari</div>
+          <div className='text-3xl mb-10 text-center'>Incomes</div>
           {incomes !== undefined && incomes.length > 0 && (
             <>
               <div className='w-full flex flex-wrap'>

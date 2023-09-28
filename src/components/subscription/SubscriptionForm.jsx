@@ -92,9 +92,9 @@ const SubscriptionForm = () => {
     dispatch(
       openModal({
         from: 'addSubscription',
-        title: 'Atribuie abonament',
+        title: 'Add Subscription',
         message:
-          'Datele introduse sunt corecte? Doresti sa confirmi atribuirea abonamentului',
+          'The subscription data are correct? Proceed to adding the subscription?',
       })
     );
   };
@@ -112,8 +112,8 @@ const SubscriptionForm = () => {
     <>
       <div className='flex flex-col md:px-10 px-0 w-full'>
         <div className='flex flex-col w-full items-center mb-8'>
-          <div className='text-3xl mb-10'>Atribuie Abonament</div>
-          <div className='text-xl mb-4 w-full'>Detalii Abonament</div>
+          <div className='text-3xl mb-10'>Add Subscription</div>
+          <div className='text-xl mb-4 w-full'>Subscription details</div>
           <form className='w-full'>
             <div className='flex md:flex-row flex-col text-md gap-2 self-center w-full'>
               <Select
@@ -132,7 +132,7 @@ const SubscriptionForm = () => {
                 register={register}
                 errors={errors}
                 required
-                label='Numar Sedinte'
+                label='Training numbers'
                 extraClass='py-2 mb-1'
                 options={trainingOptions}
                 onChangeCapture={(e) => setDaysChoice(e.target.value)}
@@ -140,7 +140,7 @@ const SubscriptionForm = () => {
               <Input
                 type='date'
                 id='startDate'
-                label='Data de Start'
+                label='Start date'
                 extraClass='py-1 mb-1'
                 register={register}
                 errors={errors}
@@ -148,7 +148,7 @@ const SubscriptionForm = () => {
               />
               <Select
                 id='price'
-                label='Pret'
+                label='Price'
                 options={prices}
                 extraClass='py-2 mb-1'
                 register={register}
@@ -158,7 +158,9 @@ const SubscriptionForm = () => {
             </div>
             <div className='mt-4 w-full flex md:flex-row flex-col md:justify-between items-center'>
               <Button
-                label={scheduleTrainings ? 'Doar Abonament' : 'Antrenamente'}
+                label={
+                  scheduleTrainings ? 'Only subscription' : 'Training days'
+                }
                 extraClass='md:w-3/12 w-full h-10'
                 small
                 onClick={(e) => {
@@ -170,7 +172,7 @@ const SubscriptionForm = () => {
                 <div className=' md:w-3/12 w-full md:mt-0 mt-4'>
                   <Select
                     id='time'
-                    label='Interval Orar'
+                    label='Time'
                     options={timeRanges}
                     extraClass='py-2 mb-4 flex'
                     register={register}
@@ -192,13 +194,13 @@ const SubscriptionForm = () => {
           {modalFrom !== 'updateSubscription' && (
             <div className='flex md:flex-row flex-col mt-2 gap-2 justify-center w-full'>
               <div className='w-full text-center text-red-500'>
-                Sedinte Programate:
+                Scheduled Bookings:
                 <span className='font-bold pl-2'>
                   {booking.bookingDays.length}
                 </span>
               </div>
               <div className='w-full text-center text-blue-600'>
-                Sedinte Restante:
+                Bookings to schedule:
                 <span className='font-bold pl-2'>
                   {daysChoice - booking.bookingDays.length}
                 </span>
@@ -208,7 +210,7 @@ const SubscriptionForm = () => {
 
           <div className='w-full mt-4 md:px-0 px-4 text-center'>
             <Button
-              label='Atribuie Abonament'
+              label='Add Subscription'
               extraClass='md:w-3/12 w-full'
               small
               onClick={handleSubmit(openSubmitModal)}
@@ -221,9 +223,9 @@ const SubscriptionForm = () => {
           isOpen={confirmModal.isOpen}
           title={confirmModal.title}
           secondaryAction={handleCloseSubmitModal}
-          secondaryActionLabel='Inapoi'
+          secondaryActionLabel='Back'
           onSubmit={handleSubmit(onSubmit)}
-          actionLabel='Confirma'
+          actionLabel='Confirm'
           onClose={handleCloseSubmitModal}
           body={confirmModal.message}
           small

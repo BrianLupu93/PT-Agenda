@@ -223,7 +223,7 @@ const Calendar = () => {
       openModal({
         from: 'addBookings',
         message: '',
-        title: 'Programeaza sedinte',
+        title: 'Schedule bookings',
       })
     );
     await dispatch(getAllActiveSubscriptions());
@@ -329,7 +329,7 @@ const Calendar = () => {
             })}
         </div>
         <Button
-          label='Programeaza Sedinte'
+          label='Schedule bookings'
           extraClass='mt-10 w-6/12 self-center'
           small
           onClick={openBookingModal}
@@ -340,9 +340,9 @@ const Calendar = () => {
           isOpen={confirmModal.isOpen}
           title={confirmModal.title}
           secondaryAction={closeBookingModal}
-          secondaryActionLabel='Inapoi'
+          secondaryActionLabel='Back'
           onSubmit={handleSubmit(onSubmit)}
-          actionLabel='Confirma'
+          actionLabel='Confirm'
           onClose={closeBookingModal}
           body={<BookingModalBody register={register} errors={errors} />}
           small

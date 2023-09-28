@@ -65,7 +65,7 @@ const Login = () => {
         personal trainers manager tool
       </div>
       <div className='flex flex-col gap-4 md:w-96 w-full md:h-3/5 w-full border border-neutral-300 rounded-md shadow p-6 bg-white '>
-        <div className='w-full text-xl text-center mb-8'>Autentificare</div>
+        <div className='w-full text-xl text-center mb-8'>Login</div>
         <Input
           id='username'
           label='Username'
@@ -75,7 +75,7 @@ const Login = () => {
         />
         <Input
           id='password'
-          label='Parola'
+          label='Password'
           type='password'
           register={register}
           errors={errors}

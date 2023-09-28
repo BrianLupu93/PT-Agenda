@@ -32,7 +32,7 @@ const ClientsPage = () => {
   return (
     <div className='h-full md:w-9/12 w-full mx-auto flex flex-col'>
       <div className='w-full md:mb-0 mb-10'>
-        <ClientsForm headline='Adauga Client' buttonLabel='Adauga Client' />
+        <ClientsForm headline='Add Client' buttonLabel='Add Client' />
         {clients !== undefined && clients.length > 0 && (
           <>
             <div className='divider border border-2 mt-2 mb-10 border-zinc-700 shadow rounded-full'></div>

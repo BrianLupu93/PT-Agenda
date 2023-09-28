@@ -47,15 +47,14 @@ const ClientsForm = ({ headline, buttonLabel }) => {
 
   const openAddClientModal = () => {
     if (confirmModal.from === 'updateClient') {
-      toast.success('Date client actualizate');
+      toast.success('Client data Updated');
       dispatch(closeModal());
     } else {
       dispatch(
         openModal({
           from: 'addClient',
-          title: 'Adauga Client',
-          message:
-            ' Datele introduse sunt corecte? Doresti sa confirmi adaugarea clientului nou?',
+          title: 'Add Client',
+          message: 'The client data are correct? Do you want to proceed?',
         })
       );
     }
@@ -77,7 +76,7 @@ const ClientsForm = ({ headline, buttonLabel }) => {
           <div className='flex md:flex-row flex-col text-md gap-2 w-full'>
             <Input
               id='name'
-              label='Nume si Prenume'
+              label='Last Name and First Name'
               type='text'
               extraClass='py-1 mb-1'
               register={register}
@@ -86,7 +85,7 @@ const ClientsForm = ({ headline, buttonLabel }) => {
             />
             <Input
               id='phone'
-              label='Telefon'
+              label='Phone'
               type='text'
               extraClass='py-1 mb-1'
               register={register}
@@ -123,9 +122,9 @@ const ClientsForm = ({ headline, buttonLabel }) => {
           isOpen={confirmModal.isOpen}
           title={confirmModal.title}
           secondaryAction={() => dispatch(closeModal())}
-          secondaryActionLabel='Inapoi'
+          secondaryActionLabel='Back'
           onSubmit={handleSubmit(onAddClientSubmit)}
-          actionLabel='Confirma'
+          actionLabel='Confirm'
           onClose={() => dispatch(closeModal())}
           body={confirmModal.message}
           small

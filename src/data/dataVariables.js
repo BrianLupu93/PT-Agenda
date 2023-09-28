@@ -33,24 +33,17 @@ export const timeRanges = [
   '21:30-22:30',
 ];
 
-export const clients = [
-  'Ioana Vasile',
-  'Mugurel Sebi',
-  'Cosmin Decebal',
-  'Leana Goja',
-];
-
 export const months = [
-  'Ianuarie',
-  'Februarie',
-  'Martie',
-  'Aprilie',
-  'Mai',
-  'Iunie',
-  'Iulie',
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'Juny',
+  'July',
   'August',
-  'Septembrie',
-  'Octombrie',
-  'Noiembrie',
-  'Decembrie',
+  'September',
+  'Octomber',
+  'November',
+  'December',
 ];
