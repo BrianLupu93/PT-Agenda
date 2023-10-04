@@ -359,14 +359,11 @@ const SubscriptionsTable = () => {
         <span
           className={`${
             Object.keys(selectedSubscription).length > 0 &&
-            selectedSubscription.isActive
-              ? 'text-green-500'
-              : 'text-rose-500'
+            selectedSubscription.alertMessage === 'ACTIV'
+              ? 'text-green-500 font-bold text-xs'
+              : 'text-rose-500 font-bold text-xs'
           } font-bold ml-2`}>
-          {Object.keys(selectedSubscription).length > 0 &&
-          selectedSubscription.isActive
-            ? 'ACTIV'
-            : 'Expire today'}
+          {selectedSubscription.alertMessage}
         </span>
       </div>
     </div>
@@ -531,7 +528,7 @@ const SubscriptionsTable = () => {
                       reBooked={subscription.trainingsReBooked}
                       startDate={subscription.startDate}
                       endDate={subscription.endDate}
-                      status={subscription.isActive ? 'ACTIV' : 'Expire today'}
+                      alertMessage={subscription.alertMessage}
                       key={i}
                       extraClass={count % 2 !== 0 ? 'bg-zinc-100' : ''}
                     />
