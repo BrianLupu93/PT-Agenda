@@ -57,7 +57,7 @@ const Login = () => {
   };
 
   return (
-    <div className='w-full h-full flex flex-col items-center mt-40 md:px-0 px-4'>
+    <div className='w-full h-full flex flex-col items-center mt-20 md:px-0 px-4'>
       <div className='text-4xl font-bold text-blue-600 italic'>
         Sm<span className='text-rose-500'>a</span>rt
       </div>
