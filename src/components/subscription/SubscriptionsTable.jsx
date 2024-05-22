@@ -1,32 +1,32 @@
-import { BsPlusCircleFill } from 'react-icons/bs';
-import { AiOutlineSearch } from 'react-icons/ai';
-import { RxUpdate } from 'react-icons/rx';
-import { MdDeleteForever } from 'react-icons/md';
-import dayjs from 'dayjs';
-import Modal from '../Utils/modal/Modal';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import Input from '../Utils/Input';
-import { useDispatch, useSelector } from 'react-redux';
+import { BsPlusCircleFill } from "react-icons/bs";
+import { AiOutlineSearch } from "react-icons/ai";
+import { RxUpdate } from "react-icons/rx";
+import { MdDeleteForever } from "react-icons/md";
+import dayjs from "dayjs";
+import Modal from "../Utils/modal/Modal";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import Input from "../Utils/Input";
+import { useDispatch, useSelector } from "react-redux";
 import {
   closeModal,
   openModal,
   setEmpty,
   setFrom,
-} from '../../features/modal/confirmModalSlice';
-import calculateEndSubscription from '../../features/utils/calculateEndSubscription';
-import Select from '../Utils/Select';
-import { timeRanges } from '../../data/dataVariables';
-import CalendarMini from '../booking/CalendarMini';
-import { paginate } from '../../features/utils/paginate';
-import Button from '../Utils/Button';
+} from "../../features/modal/confirmModalSlice";
+import calculateEndSubscription from "../../features/utils/calculateEndSubscription";
+import Select from "../Utils/Select";
+import { timeRanges } from "../../data/dataVariables";
+import CalendarMini from "../booking/CalendarMini";
+import { paginate } from "../../features/utils/paginate";
+import Button from "../Utils/Button";
 import {
   createBooking,
   deleteAllBooking,
   resetBookingDays,
   resetTime,
   setTime,
-} from '../../features/booking/bookingSlice';
+} from "../../features/booking/bookingSlice";
 import {
   deleteSubscription,
   getAllActiveSubscriptions,
@@ -34,7 +34,7 @@ import {
   setSelectedSubscription,
   updateExpiredSubscription,
   updateSubscription,
-} from '../../features/subscription/subscriptionSlice';
+} from "../../features/subscription/subscriptionSlice";
 
 const SubscriptionsTable = () => {
   const isMobile = window.screen.width <= 420;
@@ -89,25 +89,25 @@ const SubscriptionsTable = () => {
   const handleViewDetails = (id) => {
     dispatch(setSelectedSubscription(id));
     dispatch(
-      openModal({ from: 'subscriptionDetail', title: 'Subscription details' })
+      openModal({ from: "subscriptionDetail", title: "Subscription details" })
     );
   };
   // Open update subscription modal from mobile
   const openUpdateSubscriptionMobile = () => {
     dispatch(
-      openModal({ from: 'updateSubscription', title: 'Update Subscription' })
+      openModal({ from: "updateSubscription", title: "Update Subscription" })
     );
   };
   // Open update subscription modal form desktop
   const onUpdateSubscription = (id) => {
     dispatch(setSelectedSubscription(id));
     dispatch(
-      openModal({ from: 'updateSubscription', title: 'Refresh subscription' })
+      openModal({ from: "updateSubscription", title: "Refresh subscription" })
     );
   };
   // SUBMIT handler for update subscritpion
   const onSubmit = async (data) => {
-    const startDate = dayjs(data.startDate).format('DD/MM/YYYY');
+    const startDate = dayjs(data.startDate).format("DD/MM/YYYY");
 
     const endDate = calculateEndSubscription(
       data.startDate,
@@ -152,7 +152,7 @@ const SubscriptionsTable = () => {
     await dispatch(resetTime());
     await dispatch(resetSelecetdSubscription());
     await dispatch(closeModal());
-    await dispatch(setFrom(''));
+    await dispatch(setFrom(""));
     reset();
     setScheduleTrainings(false);
   };
@@ -163,20 +163,20 @@ const SubscriptionsTable = () => {
     dispatch(resetSelecetdSubscription());
     dispatch(closeModal());
     dispatch(setEmpty());
-    dispatch(setFrom(''));
+    dispatch(setFrom(""));
     setScheduleTrainings(false);
   };
   // Close DETAIL modal from mobile
   const handleCloseDetailModal = () => {
     dispatch(resetSelecetdSubscription());
     dispatch(setEmpty());
-    dispatch(setFrom(''));
+    dispatch(setFrom(""));
     dispatch(closeModal());
   };
 
   // Search by name handler
   const handleSearchClient = (e) => {
-    e.target.value === '' ? setSearchClient(false) : setSearchClient(true);
+    e.target.value === "" ? setSearchClient(false) : setSearchClient(true);
     const input = e.target.value.toLowerCase();
     const matchClients = subscriptions.filter((client) =>
       client.name.toLowerCase().match(input)
@@ -189,10 +189,10 @@ const SubscriptionsTable = () => {
     dispatch(setSelectedSubscription(id));
     dispatch(
       openModal({
-        from: 'deleteSubscription',
-        title: 'Delete Subscription',
+        from: "deleteSubscription",
+        title: "Delete Subscription",
         message:
-          'Are you sure to delete the subscription? All the subscription data will be removed.',
+          "Are you sure to delete the subscription? All the subscription data will be removed.",
       })
     );
   };
@@ -201,7 +201,7 @@ const SubscriptionsTable = () => {
     dispatch(resetSelecetdSubscription());
     dispatch(closeModal());
     dispatch(setEmpty());
-    dispatch(setFrom(''));
+    dispatch(setFrom(""));
   };
 
   const handleDeleteSubscription = async () => {
@@ -211,7 +211,8 @@ const SubscriptionsTable = () => {
     dispatch(resetSelecetdSubscription());
     dispatch(setEmpty());
     dispatch(closeModal());
-    dispatch(setFrom(''));
+    dispatch(setFrom(""));
+    window.location.reload;
   };
 
   // =========================================================
@@ -232,14 +233,15 @@ const SubscriptionsTable = () => {
   }) => {
     const start = Array.from(startDate)
       .filter((el, index) => index !== 6 && index !== 7)
-      .join('');
+      .join("");
     const end = Array.from(endDate)
       .filter((el, index) => index !== 6 && index !== 7)
-      .join('');
+      .join("");
 
     return (
       <tr
-        className={`grid md:grid-cols-10 grid-cols-4 grid-flow-col gap-1 py-2 items-center text-center ${extraClass}`}>
+        className={`grid md:grid-cols-10 grid-cols-4 grid-flow-col gap-1 py-2 items-center text-center ${extraClass}`}
+      >
         <td>{name}</td>
         <td className='md:block hidden'>{total}</td>
         <td className='md:block hidden'>{done}</td>
@@ -250,10 +252,11 @@ const SubscriptionsTable = () => {
         <td className='md:block hidden'>{end}</td>
         <td
           className={
-            alertMessage === 'ACTIV'
-              ? 'text-green-500 font-bold text-xs'
-              : 'text-rose-500 font-bold text-xs'
-          }>
+            alertMessage === "ACTIV"
+              ? "text-green-500 font-bold text-xs"
+              : "text-rose-500 font-bold text-xs"
+          }
+        >
           {alertMessage}
         </td>
         <td className='flex justify-center'>
@@ -359,10 +362,11 @@ const SubscriptionsTable = () => {
         <span
           className={`${
             Object.keys(selectedSubscription).length > 0 &&
-            selectedSubscription.alertMessage === 'ACTIV'
-              ? 'text-green-500 font-bold text-xs'
-              : 'text-rose-500 font-bold text-xs'
-          } font-bold ml-2`}>
+            selectedSubscription.alertMessage === "ACTIV"
+              ? "text-green-500 font-bold text-xs"
+              : "text-rose-500 font-bold text-xs"
+          } font-bold ml-2`}
+        >
           {selectedSubscription.alertMessage}
         </span>
       </div>
@@ -414,7 +418,7 @@ const SubscriptionsTable = () => {
       <div>
         <div className=' w-full flex md:flex-row flex-col md:justify-between items-center'>
           <Button
-            label={scheduleTrainings ? 'Only Subscription' : 'Training days'}
+            label={scheduleTrainings ? "Only Subscription" : "Training days"}
             extraClass='md:w-3/12 w-full '
             small
             onClick={(e) => {
@@ -485,7 +489,7 @@ const SubscriptionsTable = () => {
                 <td className='md:block hidden'>Start</td>
                 <td className='md:block hidden'>End</td>
                 <td>Status</td>
-                <td>{isMobile ? 'Details' : 'Edit'}</td>
+                <td>{isMobile ? "Details" : "Edit"}</td>
               </tr>
             </thead>
             <tbody>
@@ -508,7 +512,7 @@ const SubscriptionsTable = () => {
                       endDate={subscription.endDate}
                       alertMessage={subscription.alertMessage}
                       key={i}
-                      extraClass={count % 2 !== 0 ? 'bg-zinc-100' : ''}
+                      extraClass={count % 2 !== 0 ? "bg-zinc-100" : ""}
                     />
                   );
                 })}
@@ -530,7 +534,7 @@ const SubscriptionsTable = () => {
                       endDate={subscription.endDate}
                       alertMessage={subscription.alertMessage}
                       key={i}
-                      extraClass={count % 2 !== 0 ? 'bg-zinc-100' : ''}
+                      extraClass={count % 2 !== 0 ? "bg-zinc-100" : ""}
                     />
                   );
                 })}
@@ -548,8 +552,9 @@ const SubscriptionsTable = () => {
                       }}
                       key={i}
                       className={`${
-                        currentPage === i + 1 ? 'bg-blue-600' : 'bg-rose-500'
-                      } mr-2 h-8 w-8 mb-4 rounded-full text-white focus:bg-blue-600`}>
+                        currentPage === i + 1 ? "bg-blue-600" : "bg-rose-500"
+                      } mr-2 h-8 w-8 mb-4 rounded-full text-white focus:bg-blue-600`}
+                    >
                       {i + 1}
                     </button>
                   );
@@ -558,7 +563,7 @@ const SubscriptionsTable = () => {
           )}
         </div>
       </div>
-      {confirmModal.from === 'subscriptionDetail' && isMobile && (
+      {confirmModal.from === "subscriptionDetail" && isMobile && (
         <Modal
           isOpen={confirmModal.isOpen}
           title={confirmModal.title}
@@ -571,7 +576,7 @@ const SubscriptionsTable = () => {
           small
         />
       )}
-      {confirmModal.from === 'updateSubscription' && (
+      {confirmModal.from === "updateSubscription" && (
         <Modal
           isOpen={confirmModal.isOpen}
           title={confirmModal.title}
@@ -584,7 +589,7 @@ const SubscriptionsTable = () => {
           small
         />
       )}
-      {confirmModal.from === 'deleteSubscription' && (
+      {confirmModal.from === "deleteSubscription" && (
         <Modal
           isOpen={confirmModal.isOpen}
           title={confirmModal.title}

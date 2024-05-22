@@ -1,35 +1,34 @@
-import { useForm } from 'react-hook-form';
-import Input from '../Utils/Input';
-import Button from '../Utils/Button';
-import Select from '../Utils/Select';
-import Modal from '../Utils/modal/Modal';
-import { toast } from 'react-hot-toast';
-import { timeRanges } from '../../data/dataVariables';
-import CalendarMini from '../booking/CalendarMini';
-import { useDispatch, useSelector } from 'react-redux';
+import { useForm } from "react-hook-form";
+import Input from "../Utils/Input";
+import Button from "../Utils/Button";
+import Select from "../Utils/Select";
+import Modal from "../Utils/modal/Modal";
+import { timeRanges } from "../../data/dataVariables";
+import CalendarMini from "../booking/CalendarMini";
+import { useDispatch, useSelector } from "react-redux";
 import {
   closeModal,
   openModal,
   setEmpty,
   setFrom,
-} from './../../features/modal/confirmModalSlice';
+} from "./../../features/modal/confirmModalSlice";
 import {
   createBooking,
   resetBookingDays,
   resetTime,
   setTime,
-} from './../../features/booking/bookingSlice';
+} from "./../../features/booking/bookingSlice";
 import {
   resetSelectedClient,
   setSelectedClient,
-} from '../../features/clients/clientsSlice';
-import dayjs from 'dayjs';
-import { useState } from 'react';
-import calculateEndSubscription from '../../features/utils/calculateEndSubscription';
+} from "../../features/clients/clientsSlice";
+import dayjs from "dayjs";
+import { useState } from "react";
+import calculateEndSubscription from "../../features/utils/calculateEndSubscription";
 import {
   createSubscription,
   getAllActiveSubscriptions,
-} from '../../features/subscription/subscriptionSlice';
+} from "../../features/subscription/subscriptionSlice";
 
 const SubscriptionForm = () => {
   const dispatch = useDispatch();
@@ -38,7 +37,6 @@ const SubscriptionForm = () => {
   const selectedClient = useSelector((state) => state.client.selectedClient);
   const trainingOptions = useSelector((state) => state.booking.trainigOptions);
   const clients = useSelector((state) => state.client.clients);
-  const prices = useSelector((state) => state.booking.prices);
   const modalFrom = useSelector((state) => state.modal.from);
   const [daysChoice, setDaysChoice] = useState(null);
   const [scheduleTrainings, setScheduleTrainings] = useState(false);
@@ -51,11 +49,11 @@ const SubscriptionForm = () => {
   } = useForm({});
 
   const onSubmit = async (data) => {
-    delete data['time'];
+    delete data["time"];
 
     const trainingScheduled = booking.bookingDays.length;
     const remainToSchedule = data.trainingNumbers - booking.bookingDays.length;
-    const startDate = dayjs(data.startDate).format('DD/MM/YYYY');
+    const startDate = dayjs(data.startDate).format("DD/MM/YYYY");
 
     const endDate = calculateEndSubscription(
       data.startDate,
@@ -82,19 +80,20 @@ const SubscriptionForm = () => {
     await dispatch(resetTime());
     await dispatch(resetSelectedClient());
     await dispatch(closeModal());
-    await dispatch(setFrom(''));
+    await dispatch(setFrom(""));
     reset();
     setScheduleTrainings(false);
+    window.location.reload;
   };
 
   const openSubmitModal = (data) => {
     dispatch(setSelectedClient(data.clientId));
     dispatch(
       openModal({
-        from: 'addSubscription',
-        title: 'Add Subscription',
+        from: "addSubscription",
+        title: "Add Subscription",
         message:
-          'The subscription data are correct? Proceed to adding the subscription?',
+          "The subscription data are correct? Proceed to adding the subscription?",
       })
     );
   };
@@ -102,7 +101,7 @@ const SubscriptionForm = () => {
   const handleCloseSubmitModal = () => {
     dispatch(resetSelectedClient());
     dispatch(resetTime());
-    dispatch(setFrom(''));
+    dispatch(setFrom(""));
     dispatch(resetBookingDays());
     dispatch(setEmpty());
     dispatch(closeModal());
@@ -146,10 +145,9 @@ const SubscriptionForm = () => {
                 errors={errors}
                 required
               />
-              <Select
+              <Input
                 id='price'
                 label='Price'
-                options={prices}
                 extraClass='py-2 mb-1'
                 register={register}
                 errors={errors}
@@ -159,7 +157,7 @@ const SubscriptionForm = () => {
             <div className='mt-4 w-full flex md:flex-row flex-col md:justify-between items-center'>
               <Button
                 label={
-                  scheduleTrainings ? 'Only subscription' : 'Training days'
+                  scheduleTrainings ? "Only subscription" : "Training days"
                 }
                 extraClass='md:w-3/12 w-full h-10'
                 small
@@ -191,7 +189,7 @@ const SubscriptionForm = () => {
             </div>
           )}
 
-          {modalFrom !== 'updateSubscription' && (
+          {modalFrom !== "updateSubscription" && (
             <div className='flex md:flex-row flex-col mt-2 gap-2 justify-center w-full'>
               <div className='w-full text-center text-red-500'>
                 Scheduled Bookings:
@@ -218,7 +216,7 @@ const SubscriptionForm = () => {
           </div>
         </div>
       </div>
-      {confirmModal.from === 'addSubscription' && (
+      {confirmModal.from === "addSubscription" && (
         <Modal
           isOpen={confirmModal.isOpen}
           title={confirmModal.title}

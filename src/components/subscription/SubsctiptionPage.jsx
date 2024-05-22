@@ -1,14 +1,14 @@
-import { useDispatch, useSelector } from 'react-redux';
-import SubscriptionForm from './SubscriptionForm';
-import SubscriptionsTable from './SubscriptionsTable';
-import { useEffect } from 'react';
-import { resetClientError } from '../../features/clients/clientsSlice';
-import { setLogout } from '../../features/auth/authSlice';
-import { resetBookingError } from '../../features/booking/bookingSlice';
+import { useDispatch, useSelector } from "react-redux";
+import SubscriptionForm from "./SubscriptionForm";
+import SubscriptionsTable from "./SubscriptionsTable";
+import { useEffect } from "react";
+import { resetClientError } from "../../features/clients/clientsSlice";
+import { setLogout } from "../../features/auth/authSlice";
+import { resetBookingError } from "../../features/booking/bookingSlice";
 import {
   getAllActiveSubscriptions,
   resetSubscriptionError,
-} from '../../features/subscription/subscriptionSlice';
+} from "../../features/subscription/subscriptionSlice";
 
 const SubscriptionPage = () => {
   const dispatch = useDispatch();
@@ -33,9 +33,9 @@ const SubscriptionPage = () => {
 
   useEffect(() => {
     if (
-      clientsError === 'Request failed with status code 403' ||
-      clientsError === 'Request failed with status code 403' ||
-      subscriptionError === 'Request failed with status code 403'
+      clientsError === "Request failed with status code 403" ||
+      clientsError === "Request failed with status code 403" ||
+      subscriptionError === "Request failed with status code 403"
     ) {
       logout();
     }
@@ -45,11 +45,15 @@ const SubscriptionPage = () => {
     <div className='h-full md:w-9/12 w-full mx-auto flex flex-col'>
       <div className=' w-full'>
         <SubscriptionForm />
-        {subscriptions && (
+        {subscriptions ? (
           <>
             <div className='divider border border-2 mt-2 mb-10 border-zinc-700 shadow rounded-full'></div>
             <SubscriptionsTable />
           </>
+        ) : (
+          <div className='mt-10 w-full text-center text-xl text-blue-500'>
+            There are not any active subscription
+          </div>
         )}
       </div>
     </div>

@@ -1,25 +1,25 @@
-import { BiSolidEditAlt } from 'react-icons/bi';
-import { MdDeleteForever } from 'react-icons/md';
-import { AiOutlineSearch } from 'react-icons/ai';
-import Modal from '../Utils/modal/Modal';
-import { toast } from 'react-hot-toast';
-import ClientsForm from './ClientsForm';
-import { useDispatch, useSelector } from 'react-redux';
+import { BiSolidEditAlt } from "react-icons/bi";
+import { MdDeleteForever } from "react-icons/md";
+import { AiOutlineSearch } from "react-icons/ai";
+import Modal from "../Utils/modal/Modal";
+import { toast } from "react-hot-toast";
+import ClientsForm from "./ClientsForm";
+import { useDispatch, useSelector } from "react-redux";
 import {
   openModal,
   closeModal,
   setEmpty,
   setFrom,
-} from '../../features/modal/confirmModalSlice';
+} from "../../features/modal/confirmModalSlice";
 
-import { paginate } from '../../features/utils/paginate';
-import { useEffect, useState } from 'react';
+import { paginate } from "../../features/utils/paginate";
+import { useEffect, useState } from "react";
 import {
   deleteClient,
   getAllClients,
   resetSelectedClient,
   setSelectedClient,
-} from '../../features/clients/clientsSlice';
+} from "../../features/clients/clientsSlice";
 
 const ClientsTable = () => {
   const dispatch = useDispatch();
@@ -45,8 +45,8 @@ const ClientsTable = () => {
   const openUpdateClientModal = (id) => {
     dispatch(
       openModal({
-        from: 'updateClient',
-        title: 'Modifica date client',
+        from: "updateClient",
+        title: "Update client data",
       })
     );
     dispatch(setSelectedClient(id));
@@ -55,10 +55,10 @@ const ClientsTable = () => {
   const openDeleteClientModal = (id) => {
     dispatch(
       openModal({
-        from: 'deleteClient',
-        title: 'Delete Client',
+        from: "deleteClient",
+        title: "Delete Client",
         message:
-          'Are you sure to delete the client? The client data will be deleted.',
+          "Are you sure to delete the client? The client data will be deleted.",
       })
     );
     dispatch(setSelectedClient(id));
@@ -74,7 +74,7 @@ const ClientsTable = () => {
   };
 
   const handleSearchClient = (e) => {
-    e.target.value === '' ? setSearchClient(false) : setSearchClient(true);
+    e.target.value === "" ? setSearchClient(false) : setSearchClient(true);
     const input = e.target.value.toLowerCase();
     const matchClients = clients.filter((client) =>
       client.name.toLowerCase().match(input)
@@ -89,7 +89,8 @@ const ClientsTable = () => {
     return (
       <>
         <tr
-          className={`grid md:grid-cols-4 grid-cols-3 grid-flow-col gap-1 py-2 items-center pl-4 ${extraClass}`}>
+          className={`grid md:grid-cols-4 grid-cols-3 grid-flow-col gap-1 py-2 items-center pl-4 ${extraClass}`}
+        >
           <td>{name}</td>
           <td>{phone}</td>
           <td className='text-blue-600 md:block hidden'>{email}</td>
@@ -149,7 +150,7 @@ const ClientsTable = () => {
                       clientId={client._id}
                       key={i}
                       count={i + 1}
-                      extraClass={(i + 1) % 2 !== 0 ? 'bg-zinc-100' : ''}
+                      extraClass={(i + 1) % 2 !== 0 ? "bg-zinc-100" : ""}
                     />
                   );
                 })}
@@ -163,7 +164,7 @@ const ClientsTable = () => {
                       clientId={client._id}
                       key={i}
                       count={i + 1}
-                      extraClass={(i + 1) % 2 !== 0 ? 'bg-zinc-100' : ''}
+                      extraClass={(i + 1) % 2 !== 0 ? "bg-zinc-100" : ""}
                     />
                   );
                 })}
@@ -180,8 +181,9 @@ const ClientsTable = () => {
                       }}
                       key={i}
                       className={`${
-                        currentPage === i + 1 ? 'bg-blue-600' : 'bg-rose-500'
-                      } mr-2 h-8 w-8 mb-4 rounded-full text-white focus:bg-blue-600`}>
+                        currentPage === i + 1 ? "bg-blue-600" : "bg-rose-500"
+                      } mr-2 h-8 w-8 mb-4 rounded-full text-white focus:bg-blue-600`}
+                    >
                       {i + 1}
                     </button>
                   );
@@ -190,7 +192,7 @@ const ClientsTable = () => {
           )}
         </div>
       </div>
-      {confirmModal.from === 'deleteClient' && (
+      {confirmModal.from === "deleteClient" && (
         <Modal
           isOpen={confirmModal.isOpen}
           title={confirmModal.title}
@@ -203,7 +205,7 @@ const ClientsTable = () => {
           small
         />
       )}
-      {confirmModal.from === 'updateClient' && (
+      {confirmModal.from === "updateClient" && (
         <Modal
           isOpen={confirmModal.isOpen}
           title={confirmModal.title}

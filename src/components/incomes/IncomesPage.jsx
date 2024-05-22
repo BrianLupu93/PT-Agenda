@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import Button from '../Utils/Button';
-import { useDispatch, useSelector } from 'react-redux';
-import {} from '../../features/clients/clientsSlice';
-import dayjs from 'dayjs';
+import React, { useEffect, useState } from "react";
+import Button from "../Utils/Button";
+import { useDispatch, useSelector } from "react-redux";
+import {} from "../../features/clients/clientsSlice";
+import dayjs from "dayjs";
 import {
   getAllIncomes,
   resetIncomeError,
-} from '../../features/income/incomeSlice';
-import { months } from '../../data/dataVariables';
-import { setLogout } from '../../features/auth/authSlice';
+} from "../../features/income/incomeSlice";
+import { months } from "../../data/dataVariables";
+import { setLogout } from "../../features/auth/authSlice";
 
 const IncomesPage = () => {
   const dispatch = useDispatch();
@@ -29,7 +29,7 @@ const IncomesPage = () => {
   }, []);
 
   useEffect(() => {
-    if (incomeError === 'Request failed with status code 403') {
+    if (incomeError === "Request failed with status code 403") {
       logout();
     }
   }, [incomeError]);
@@ -65,7 +65,7 @@ const IncomesPage = () => {
       <div className='w-full md:mb-0 mb-10'>
         <div className='flex flex-col md:px-10 px-0 w-full'>
           <div className='text-3xl mb-10 text-center'>Incomes</div>
-          {incomes !== undefined && incomes.length > 0 && (
+          {incomes !== undefined && incomes.length > 0 ? (
             <>
               <div className='w-full flex flex-wrap'>
                 {incomes.length > 0 &&
@@ -76,7 +76,7 @@ const IncomesPage = () => {
                           onClick={() => setYearBtn(btn)}
                           label={btn}
                           small
-                          bgClass={yearBtn === btn && 'bg-blue-600'}
+                          bgClass={yearBtn === btn && "bg-blue-600"}
                         />
                       </div>
                     );
@@ -109,7 +109,7 @@ const IncomesPage = () => {
                               month
                           ) {
                             return (
-                              <div key={i + 'm'}>
+                              <div key={i + "m"}>
                                 <div className='flex md:px-10 px-0' key={i}>
                                   <div className='w-full'>{income.name}</div>
                                   <div className='w-full text-right font-bold'>
@@ -124,7 +124,7 @@ const IncomesPage = () => {
                         <div className='w-full text-right border-t-2 border-rose-500 my-2 md:pr-10 pr-0'>
                           <span className='text-lg mr-2 font-bold text-blue-500'>
                             TOTAL:
-                          </span>{' '}
+                          </span>{" "}
                           <span className='font-bold'>{total}</span>
                         </div>
                       </div>
@@ -132,6 +132,10 @@ const IncomesPage = () => {
                   })}
               </div>
             </>
+          ) : (
+            <div className='mt-10 w-full text-center text-xl text-blue-500'>
+              There are no incomes to show
+            </div>
           )}
         </div>
       </div>
