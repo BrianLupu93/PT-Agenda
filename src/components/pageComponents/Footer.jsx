@@ -4,12 +4,16 @@ import { toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { setLogout } from "../../features/auth/authSlice";
 import { setPage } from "../../features/app/appSlice";
+import axios from "axios";
+import { authUrl } from "../../features/api/serverUrl";
 
 const Footer = () => {
   const dispatch = useDispatch();
   const page = useSelector((state) => state.app.page);
 
   const handleLogout = () => {
+    axios.post(`${authUrl}/logout`, {});
+
     localStorage.clear();
     dispatch(setLogout());
     toast.success("Sucess Logout!");

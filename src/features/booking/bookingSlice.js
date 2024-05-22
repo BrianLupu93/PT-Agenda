@@ -1,11 +1,11 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { bookingUrl } from '../api/serverUrl';
-import axios from 'axios';
-import sortTodayBookings from '../utils/sortTodayBookings';
-import { toast } from 'react-hot-toast';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { bookingUrl } from "../api/serverUrl";
+import axios from "axios";
+import sortTodayBookings from "../utils/sortTodayBookings";
+import { toast } from "react-hot-toast";
 
 export const getAllBookings = createAsyncThunk(
-  'booking/getAllBookings',
+  "booking/getAllBookings",
   async () => {
     const res = await axios.get(`${bookingUrl}`);
     const data = res.data;
@@ -14,7 +14,7 @@ export const getAllBookings = createAsyncThunk(
 );
 
 export const getBooking = createAsyncThunk(
-  'bookings/getBooking',
+  "bookings/getBooking",
   async (id) => {
     const res = await axios.get(`${bookingUrl}/${id}`);
     const data = await res.data;
@@ -23,7 +23,7 @@ export const getBooking = createAsyncThunk(
 );
 
 export const createBooking = createAsyncThunk(
-  'bookings/createBooking',
+  "bookings/createBooking",
   async (bookData) => {
     const res = await axios.post(`${bookingUrl}`, bookData);
     const data = await res.data;
@@ -32,19 +32,19 @@ export const createBooking = createAsyncThunk(
 );
 
 export const updateBooking = createAsyncThunk(
-  'booking/updateBooking',
+  "booking/updateBooking",
   async ({ id, data }) => {
     await axios.patch(`${bookingUrl}/${id}`, data);
   }
 );
 export const deleteBooking = createAsyncThunk(
-  'booking/deleteBooking',
+  "booking/deleteBooking",
   async (id) => {
     await axios.delete(`${bookingUrl}/${id}`);
   }
 );
 export const deleteAllBooking = createAsyncThunk(
-  'booking/deleteAllBooking',
+  "booking/deleteAllBooking",
   async (id) => {
     await axios.delete(`${bookingUrl}/delete-all/${id}`);
   }
@@ -55,15 +55,15 @@ const initialState = {
   todayBookings: [],
   bookingDays: [],
   selectedBooking: {},
-  time: '',
+  time: "",
   trainigOptions: [12, 16, 36, 48],
   prices: [600, 800, 1800, 2400],
-  error: '',
+  error: "",
   editBooking: {},
 };
 
 export const bookingSlice = createSlice({
-  name: 'booking',
+  name: "booking",
   initialState,
   reducers: {
     addBookingDay: (state, action) => {
@@ -81,10 +81,10 @@ export const bookingSlice = createSlice({
       state.time = action.payload;
     },
     resetTime: (state) => {
-      state.time = '';
+      state.time = "";
     },
     resetBookingError: (state) => {
-      state.error = '';
+      state.error = "";
     },
     setTodayBookings: (state, action) => {
       if (state.allBookings.length === 0) {
@@ -147,12 +147,12 @@ export const bookingSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(updateBooking.fulfilled, (state) => {
-      toast.success('Booking Rescheduled!');
+      toast.success("Booking Rescheduled!");
       state.isLoading = false;
     });
     builder.addCase(updateBooking.rejected, (state, action) => {
       state.isLoading = false;
-      toast.error('Error! Please try again.');
+      toast.error("Error! Please try again.");
       state.error = action.error.message;
     });
     // deleteBooking
@@ -160,12 +160,12 @@ export const bookingSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(deleteBooking.fulfilled, (state) => {
-      toast.success('Booking deleted!');
+      toast.success("Booking deleted!");
       state.isLoading = false;
     });
     builder.addCase(deleteBooking.rejected, (state, action) => {
       state.isLoading = false;
-      toast.error('Error! Please try again.');
+      toast.error("Error! Please try again.");
       state.error = action.error.message;
     });
     // deleteAllBooking
