@@ -272,13 +272,13 @@ const Calendar = () => {
         </div>
 
         <div className='grid grid-cols-7 gap-1 text-center pb-2'>
-          <div>Lu</div>
-          <div>Ma</div>
-          <div>Mie</div>
-          <div>Joi</div>
-          <div>Vin</div>
+          <div>Mo</div>
+          <div>Tu</div>
+          <div>We</div>
+          <div>Th</div>
+          <div>Fr</div>
           <div>Sa</div>
-          <div>Du</div>
+          <div>Su</div>
         </div>
 
         <div className='grid grid-cols-7 gap-1'>

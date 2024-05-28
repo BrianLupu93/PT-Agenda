@@ -9,10 +9,12 @@ import { setAutoLogin, setLogin } from "../../features/auth/authSlice";
 import { useEffect, useState } from "react";
 import { setAuthHeader } from "../../features/auth/authentification";
 import { PiArrowsClockwiseBold } from "react-icons/pi";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -91,6 +93,13 @@ const Login = () => {
           />
           <div className='mt-6'>
             <Button label='Login' small onClick={handleSubmit(onSubmit)} />
+            <Button
+              outline
+              extraClass='mt-6 hover:bg-black hover:text-white focus:bg-white focus:border-rose-500'
+              label='Back to Homepage'
+              small
+              onClick={() => navigate("/")}
+            />
           </div>
         </div>
       </div>
