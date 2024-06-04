@@ -2,6 +2,8 @@ import React from "react";
 import Nav from "./partials/Nav";
 import Hero from "./partials/Hero";
 import About from "./partials/About";
+import Tech from "./partials/Tech";
+import Documentation from "./partials/Documentation";
 
 const Home = () => {
   return (
@@ -10,6 +12,8 @@ const Home = () => {
       <div className='mt-16'>
         <Hero />
         <About />
+        <Tech />
+        <Documentation />
       </div>
     </div>
   );
