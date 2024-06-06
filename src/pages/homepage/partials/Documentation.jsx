@@ -9,7 +9,10 @@ const Documentation = () => {
   });
 
   return (
-    <div className='w-full bg-zinc-200 min-h-[80px] 2xl:px-40 md:px-20 px-6 pt-10 pb-10'>
+    <div
+      className='w-full bg-zinc-200 min-h-[80px] 2xl:px-40 md:px-20 px-6 pt-10 pb-10'
+      id='documentation'
+    >
       <div className='text-4xl italic mb-10 font-bold'>
         How to use the AGENDA
       </div>
@@ -24,7 +27,7 @@ const Documentation = () => {
                   <ul className='list-disc pl-8 mt-2 font-normal'>
                     {doc.subtitle.map((sub, z) => {
                       return (
-                        <li>
+                        <li key={z}>
                           <button
                             className='text-left hover:text-rose-500 focus:text-blue-500 focus:font-bold'
                             onClick={(e) => {

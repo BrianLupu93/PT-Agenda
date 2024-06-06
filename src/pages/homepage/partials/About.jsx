@@ -11,7 +11,10 @@ const About = () => {
   ];
 
   return (
-    <div className='flex flex-col w-full min-h-[400px] bg-zinc-200 2xl:px-40 md:px-20 px-6 pt-10 pb-10'>
+    <div
+      className='flex flex-col w-full min-h-[400px] bg-zinc-200 2xl:px-40 md:px-20 px-6 pt-10 pb-10'
+      id='about'
+    >
       <div className='w-full text-4xl italic font-bold mb-10'>
         Discipline and organization
       </div>
@@ -32,7 +35,7 @@ const About = () => {
         {servcesList.map((el, i) => {
           return (
             <div
-              className='bg-violet-500 text-white font-bold shadow-lg shadow-violet-950/70 italic cw-full'
+              className='bg-violet-500 text-white font-bold shadow-lg shadow-violet-950/70 italic cw-full  hover:scale-[102%] hover:cursor-pointer hover:bg-violet-600'
               key={i}
             >
               <div className='flex h-full items-center py-6 px-10'>{el}</div>
