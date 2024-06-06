@@ -102,6 +102,22 @@ const Login = () => {
             />
           </div>
         </div>
+        {/* ===== user data ====== */}
+
+        <div className='flex md:flex-row flex-col mt-10'>
+          <div className='flex flex-col text-center'>
+            <div>
+              <b>Username: </b>username
+            </div>
+            <div>
+              <b>Password: </b>password
+            </div>
+            <div className='mt-4 text-blue-500'>
+              The AGENDA include some demo data, feel free to ADD, EDIT or
+              DELETE content.
+            </div>
+          </div>
+        </div>
       </div>
       {loading ? (
         <div className='flex gap-10 justify-center items-center w-full h-full bg-black opacity-50 absolute top-0 left-0'>
