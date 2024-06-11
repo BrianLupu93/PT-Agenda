@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { createContext, useState } from "react";
 import { docData } from "./docData";
 
 const Documentation = () => {
@@ -7,6 +7,20 @@ const Documentation = () => {
     subtitle: docData[0].subtitle[0],
     content: docData[0].content[0],
   });
+
+  const CreateContent = ({ title, list }) => {
+    return (
+      <>
+        <div className='font-semibold text-blue-500'>{title}</div>
+        <ul className='list-decimal pl-8 mt-2'>
+          {list &&
+            list.map((el, i) => {
+              return <li key={i}>{el}</li>;
+            })}
+        </ul>
+      </>
+    );
+  };
 
   return (
     <div
@@ -35,7 +49,7 @@ const Documentation = () => {
                               setShowDoc({
                                 title: docData[i].title,
                                 subtitle: docData[i].subtitle[z],
-                                content: docData[i].content[i],
+                                content: docData[i].content[z],
                               });
                             }}
                           >
@@ -55,7 +69,12 @@ const Documentation = () => {
           <div className='w-full border border-black rounded-md p-6'>
             <div className='text-2xl font-bold mb-10'>{showDoc.title}</div>
             <div className='text-xl mb-4'>{showDoc.subtitle}</div>
-            <div className=''>{showDoc.content}</div>
+            <div className=''>
+              <CreateContent
+                title={showDoc.content.title ? showDoc.content.title : ""}
+                list={showDoc.content.list ? showDoc.content.list : ""}
+              />
+            </div>
           </div>
         </div>
       </div>
