@@ -1,9 +1,9 @@
 import React from "react";
-import JavascriptIcon from "../partials/icons/JavascriptIcon";
-import ReactIcon from "../partials/icons/ReactIcon";
-import NodejsIcon from "../partials/icons/NodejsIcon";
-import MongoIcon from "../partials/icons/MongoIcon";
-import DokerIcon from "../partials/icons/DockerIcon";
+import JavascriptIcon from "./icons/JavascriptIcon";
+import ReactIcon from "./icons/ReactIcon";
+import NodejsIcon from "./icons/NodejsIcon";
+import MongoIcon from "./icons/MongoIcon";
+import DokerIcon from "./icons/DockerIcon";
 
 const Tech = () => {
   return (
@@ -14,7 +14,7 @@ const Tech = () => {
       <div className='text-4xl italic mb-10 text-rose-500'>
         Developed to solve a real problem
       </div>
-      <div className='text-white text-xl m-10 xl:w-8/12 w-full'>
+      <div className='text-white text-xl md:px-10 px-4 xl:w-8/12 w-full'>
         The Personal Trainer AGENDA development it started from the daily
         problems encountered by a friend, who is a personal trainer. I decided
         to try to find a solution to help him.
